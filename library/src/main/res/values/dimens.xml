@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="padding_container_horizontal">16dp</dimen>
+    <dimen name="padding_common_normal">16dp</dimen>
+</resources>

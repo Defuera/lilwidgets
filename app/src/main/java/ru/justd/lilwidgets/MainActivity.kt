@@ -12,6 +12,7 @@ class MainActivity : AppCompatActivity() {
 
         findViewById(R.id.progress_dialog_button).setOnClickListener {
             ProgressDialogFragment.Builder(supportFragmentManager)
+                    .setTitle("Please wait")
                     .create()
         }
     }

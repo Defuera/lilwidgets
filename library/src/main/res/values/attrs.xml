@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="LoaderWidget">
+        <attr name="messageTextColor" format="color" />
+    </declare-styleable>
+
+    <declare-styleable name="JustProgressDialogFragment">
+        <attr name="justDefaultMessage" format="string" />
+        <attr name="justDialogTitleStyle" format="reference" />
+        <attr name="justDialogMessageStyle" format="reference" />
+        <attr name="justDialogProgressColor" format="color" />
+    </declare-styleable>
+
+</resources>
