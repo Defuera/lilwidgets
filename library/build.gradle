@@ -1,9 +1,9 @@
 apply plugin: 'com.android.library'
-
-def supportVersion = '25.0.1'
 apply plugin: 'com.github.dcendents.android-maven'
 group='com.github.Defuera'
 
+
+def supportVersion = '25.0.1'
 android {
     compileSdkVersion 25
     buildToolsVersion supportVersion
