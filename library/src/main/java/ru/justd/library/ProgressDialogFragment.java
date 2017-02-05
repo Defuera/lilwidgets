@@ -73,7 +73,6 @@ public class ProgressDialogFragment extends DialogFragment {
                 }
 
                 String messageText = getArguments().getString(EXTRA_MESSAGE);
-
                 if (!TextUtils.isEmpty(messageText)) {
                     message.setText(messageText);
                 } else {
@@ -84,6 +83,7 @@ public class ProgressDialogFragment extends DialogFragment {
                     }
                 }
             }
+
         }
     }
 
