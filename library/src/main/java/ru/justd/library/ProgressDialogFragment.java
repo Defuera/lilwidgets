@@ -52,7 +52,7 @@ public class ProgressDialogFragment extends DialogFragment {
             //noinspection ConstantConditions
             dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
-            int progressColor = getColor(getActivity(), R.style.JustProgressDialogFragment, R.attr.justDialogProgressColor);
+            int progressColor = getColor(getActivity(), R.style.LilStyle, R.attr.lilProgressColor);
             if (progressColor != 0) {
                 progressBar
                         .getIndeterminateDrawable()
@@ -174,7 +174,7 @@ public class ProgressDialogFragment extends DialogFragment {
             bundle.putBoolean(EXTRA_HIDE_DEFAULT_MESSAGE, hideDefaultMessage);
             fragment.setArguments(bundle);
 
-            fragment.setStyle(STYLE_NORMAL, R.style.JustProgressDialogFragment);
+            fragment.setStyle(STYLE_NORMAL, R.style.LilStyle);
             fragment.show(fragmentManager, ProgressDialogFragment.class.getSimpleName());
         }
     }

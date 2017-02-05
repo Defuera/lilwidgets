@@ -5,11 +5,11 @@
         <attr name="messageTextColor" format="color" />
     </declare-styleable>
 
-    <declare-styleable name="JustProgressDialogFragment">
-        <attr name="justDefaultMessage" format="string" />
-        <attr name="justDialogTitleStyle" format="reference" />
-        <attr name="justDialogMessageStyle" format="reference" />
-        <attr name="justDialogProgressColor" format="color" />
+    <declare-styleable name="LilProgressDialogFragment">
+        <attr name="lilDefaultMessage" format="string" />
+        <attr name="lilTitleStyle" format="reference" />
+        <attr name="lilMessageStyle" format="reference" />
+        <attr name="lilProgressColor" format="color" />
     </declare-styleable>
 
 </resources>
