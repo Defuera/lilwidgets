@@ -126,6 +126,8 @@ public class ProgressDialogFragment extends DialogFragment {
     }
 
     public static void dismiss(FragmentManager fragmentManager) {
+        Builder.handler.removeCallbacksAndMessages(null);
+
         ProgressDialogFragment fragment = getTopProgressDialogFragment(fragmentManager);
 
         if (fragment != null) {
@@ -150,6 +152,9 @@ public class ProgressDialogFragment extends DialogFragment {
     }
 
     public static final class Builder {
+
+        private static Handler handler = new Handler();
+
         private final FragmentManager fragmentManager;
         private String title = null;
         private String message = null;
@@ -207,32 +212,32 @@ public class ProgressDialogFragment extends DialogFragment {
             //only one dialog can exist at a time
             dismiss(fragmentManager);
 
-            new Handler().postDelayed(new Runnable() {
-                                          @Override
-                                          public void run() {
-                                              ProgressDialogFragment fragment = getTopProgressDialogFragment(fragmentManager);
-                                              if (fragment != null) {
-                                                  throw new IllegalStateException("Dialog is already shown");
-                                              }
+            handler.postDelayed(
+                    new Runnable() {
+                        @Override
+                        public void run() {
+                            ProgressDialogFragment fragment = getTopProgressDialogFragment(fragmentManager);
+                            if (fragment != null) {
+                                throw new IllegalStateException("Dialog is already shown");
+                            }
 
-                                              fragment = new ProgressDialogFragment();
+                            fragment = new ProgressDialogFragment();
 
-                                              Bundle bundle = new Bundle();
-                                              bundle.putString(EXTRA_TITLE, title);
-                                              bundle.putString(EXTRA_MESSAGE, message);
-                                              bundle.putBoolean(EXTRA_CANCELABLE, cancelable);
-                                              bundle.putBoolean(EXTRA_HIDE_DEFAULT_MESSAGE, hideDefaultMessage);
-                                              fragment.setArguments(bundle);
+                            Bundle bundle = new Bundle();
+                            bundle.putString(EXTRA_TITLE, title);
+                            bundle.putString(EXTRA_MESSAGE, message);
+                            bundle.putBoolean(EXTRA_CANCELABLE, cancelable);
+                            bundle.putBoolean(EXTRA_HIDE_DEFAULT_MESSAGE, hideDefaultMessage);
+                            fragment.setArguments(bundle);
 
-                                              fragment.setStyle(STYLE_NORMAL, R.style.LilStyle);
+                            fragment.setStyle(STYLE_NORMAL, R.style.LilStyle);
 
-                                              fragment.show(fragmentManager, ProgressDialogFragment.class.getSimpleName());
-                                              fragment.setOnDismissListener(dismissListener);
-                                              fragment.setOnCancelListener(cancelListener);
-                                          }
-                                      },
+                            fragment.show(fragmentManager, ProgressDialogFragment.class.getSimpleName());
+                            fragment.setOnDismissListener(dismissListener);
+                            fragment.setOnCancelListener(cancelListener);
+                        }
+                    },
                     delayMillis);
         }
     }
-
 }

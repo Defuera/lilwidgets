@@ -1,6 +1,7 @@
 package ru.justd.demo
 
 import android.os.Bundle
+import android.os.Handler
 import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
 import ru.justd.lilwidgets.ProgressDialogFragment
@@ -26,5 +27,7 @@ class MainActivity : AppCompatActivity() {
                     .setDelay(1000)
                     .create()
         }
+
     }
+
 }
