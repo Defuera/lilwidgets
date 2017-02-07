@@ -49,9 +49,14 @@ public class ProgressDialogFragment extends DialogFragment {
     private TextView title;
     private TextView message;
     private DialogInterface.OnDismissListener dismissListener;
+    private DialogInterface.OnCancelListener cancelListener;
 
     private void setOnDismissListener(DialogInterface.OnDismissListener dismissListener) {
         this.dismissListener = dismissListener;
+    }
+
+    private void setOnCancelListener(DialogInterface.OnCancelListener cancelListener) {
+        this.cancelListener = cancelListener;
     }
 
     @Nullable
@@ -71,6 +76,8 @@ public class ProgressDialogFragment extends DialogFragment {
         Dialog dialog = getDialog();
         if (dialog != null) {
             dialog.setOnDismissListener(dismissListener);
+            dialog.setOnCancelListener(cancelListener);
+
             //noinspection ConstantConditions
             dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
@@ -151,6 +158,7 @@ public class ProgressDialogFragment extends DialogFragment {
         private boolean hideDefaultMessage = false;
         private long delayMillis = 0;
         private DialogInterface.OnDismissListener dismissListener;
+        private DialogInterface.OnCancelListener cancelListener;
 
         public Builder(FragmentManager fragmentManager) {
             this.fragmentManager = fragmentManager;
@@ -173,6 +181,12 @@ public class ProgressDialogFragment extends DialogFragment {
 
         public Builder setCancelable(boolean cancelable) {
             this.cancelable = cancelable;
+            return this;
+        }
+
+        public Builder setOnCancelListener(DialogInterface.OnCancelListener cancelListener) {
+            this.cancelable = true;
+            this.cancelListener = cancelListener;
             return this;
         }
 
@@ -214,6 +228,7 @@ public class ProgressDialogFragment extends DialogFragment {
 
                                               fragment.show(fragmentManager, ProgressDialogFragment.class.getSimpleName());
                                               fragment.setOnDismissListener(dismissListener);
+                                              fragment.setOnCancelListener(cancelListener);
                                           }
                                       },
                     delayMillis);
