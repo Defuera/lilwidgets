@@ -2,6 +2,7 @@ package ru.justd.lilwidgets;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.TypedArray;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
@@ -47,6 +48,11 @@ public class ProgressDialogFragment extends DialogFragment {
     private ProgressBar progressBar;
     private TextView title;
     private TextView message;
+    private DialogInterface.OnDismissListener dismissListener;
+
+    private void setOnDismissListener(DialogInterface.OnDismissListener dismissListener) {
+        this.dismissListener = dismissListener;
+    }
 
     @Nullable
     @Override
@@ -64,6 +70,7 @@ public class ProgressDialogFragment extends DialogFragment {
 
         Dialog dialog = getDialog();
         if (dialog != null) {
+            dialog.setOnDismissListener(dismissListener);
             //noinspection ConstantConditions
             dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
@@ -143,9 +150,15 @@ public class ProgressDialogFragment extends DialogFragment {
 
         private boolean hideDefaultMessage = false;
         private long delayMillis = 0;
+        private DialogInterface.OnDismissListener dismissListener;
 
         public Builder(FragmentManager fragmentManager) {
             this.fragmentManager = fragmentManager;
+        }
+
+        public Builder setOnDismissListener(DialogInterface.OnDismissListener dismissListener) {
+            this.dismissListener = dismissListener;
+            return this;
         }
 
         public Builder setTitle(String title) {
@@ -181,28 +194,30 @@ public class ProgressDialogFragment extends DialogFragment {
             dismiss(fragmentManager);
 
             new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    ProgressDialogFragment fragment = getTopProgressDialogFragment(fragmentManager);
-                    if (fragment != null) {
-                        throw new IllegalStateException("Dialog is already shown");
-                    }
+                                          @Override
+                                          public void run() {
+                                              ProgressDialogFragment fragment = getTopProgressDialogFragment(fragmentManager);
+                                              if (fragment != null) {
+                                                  throw new IllegalStateException("Dialog is already shown");
+                                              }
 
-                    fragment = new ProgressDialogFragment();
+                                              fragment = new ProgressDialogFragment();
 
-                    Bundle bundle = new Bundle();
-                    bundle.putString(EXTRA_TITLE, title);
-                    bundle.putString(EXTRA_MESSAGE, message);
-                    bundle.putBoolean(EXTRA_CANCELABLE, cancelable);
-                    bundle.putBoolean(EXTRA_HIDE_DEFAULT_MESSAGE, hideDefaultMessage);
-                    fragment.setArguments(bundle);
+                                              Bundle bundle = new Bundle();
+                                              bundle.putString(EXTRA_TITLE, title);
+                                              bundle.putString(EXTRA_MESSAGE, message);
+                                              bundle.putBoolean(EXTRA_CANCELABLE, cancelable);
+                                              bundle.putBoolean(EXTRA_HIDE_DEFAULT_MESSAGE, hideDefaultMessage);
+                                              fragment.setArguments(bundle);
 
-                    fragment.setStyle(STYLE_NORMAL, R.style.LilStyle);
+                                              fragment.setStyle(STYLE_NORMAL, R.style.LilStyle);
 
-                    fragment.show(fragmentManager, ProgressDialogFragment.class.getSimpleName());
-                }
-            },
-            delayMillis);
+                                              fragment.show(fragmentManager, ProgressDialogFragment.class.getSimpleName());
+                                              fragment.setOnDismissListener(dismissListener);
+                                          }
+                                      },
+                    delayMillis);
         }
     }
+
 }

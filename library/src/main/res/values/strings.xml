@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">JustWidgets</string>
+    <string name="app_name">LilWidgets demo</string>
     <string name="network_error">Отсутствует интернет соединение</string>
     <string name="empty_message">Нет данных</string>
     <string name="loading">Loading</string>

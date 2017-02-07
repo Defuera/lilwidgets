@@ -1,7 +1,8 @@
 package ru.justd.demo
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
+import android.widget.Toast
 import ru.justd.lilwidgets.ProgressDialogFragment
 
 class MainActivity : AppCompatActivity() {
@@ -14,6 +15,7 @@ class MainActivity : AppCompatActivity() {
             ProgressDialogFragment.Builder(supportFragmentManager)
                     .setTitle("Please wait")
                     .setCancelable(true)
+                    .setOnDismissListener({ Toast.makeText(this, "Dialog dismissed", Toast.LENGTH_SHORT).show() })
                     .create()
         }
 
