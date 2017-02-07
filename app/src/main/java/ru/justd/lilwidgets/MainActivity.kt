@@ -13,6 +13,15 @@ class MainActivity : AppCompatActivity() {
         findViewById(R.id.progress_dialog_button).setOnClickListener {
             ProgressDialogFragment.Builder(supportFragmentManager)
                     .setTitle("Please wait")
+                    .setCancelable(true)
+                    .create()
+        }
+
+        findViewById(R.id.delay).setOnClickListener {
+            ProgressDialogFragment.Builder(supportFragmentManager)
+                    .setTitle("Please wait delayed")
+                    .setCancelable(true)
+                    .setDelay(1000)
                     .create()
         }
     }

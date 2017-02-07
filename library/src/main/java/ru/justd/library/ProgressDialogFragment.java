@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.ColorInt;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -21,6 +22,20 @@ import java.util.List;
 
 /**
  * Created by defuera on 21/06/2016.
+ * ProgressDialogFragment is a singleton across the application and must be dismissed before changing view (particulary acitivity)
+ * You may style and setup the dialog via styles.xml. Find example in the demo app.
+ * <pre>
+ * {@code
+ * <style name="LilStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
+ * <item name="colorAccent">@color/colorAccent</item>
+ * <item name="android:textColor">@color/black</item>
+ * <item name="android:background">@color/white</item>
+ * <item name="lilDefaultMessage">@string/loading</item>
+ * <item name="lilTitleStyle">@style/Title</item>
+ * <item name="lilMessageStyle">@style/Body</item>
+ * <item name="lilProgressColor">@color/colorAccent</item>
+ * </style>
+ * }
  */
 public class ProgressDialogFragment extends DialogFragment {
 
@@ -83,7 +98,6 @@ public class ProgressDialogFragment extends DialogFragment {
                     }
                 }
             }
-
         }
     }
 
@@ -128,6 +142,7 @@ public class ProgressDialogFragment extends DialogFragment {
         private boolean cancelable = false;
 
         private boolean hideDefaultMessage = false;
+        private long delayMillis = 0;
 
         public Builder(FragmentManager fragmentManager) {
             this.fragmentManager = fragmentManager;
@@ -148,6 +163,11 @@ public class ProgressDialogFragment extends DialogFragment {
             return this;
         }
 
+        public Builder setDelay(long delayMillis) {
+            this.delayMillis = delayMillis;
+            return this;
+        }
+
         public Builder hideDefaultMessage() {
             this.hideDefaultMessage = true;
             return this;
@@ -160,22 +180,29 @@ public class ProgressDialogFragment extends DialogFragment {
             //only one dialog can exist at a time
             dismiss(fragmentManager);
 
-            ProgressDialogFragment fragment = getTopProgressDialogFragment(fragmentManager);
-            if (fragment != null) {
-                throw new IllegalStateException("Dialog is already shown");
-            }
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    ProgressDialogFragment fragment = getTopProgressDialogFragment(fragmentManager);
+                    if (fragment != null) {
+                        throw new IllegalStateException("Dialog is already shown");
+                    }
 
-            fragment = new ProgressDialogFragment();
+                    fragment = new ProgressDialogFragment();
 
-            Bundle bundle = new Bundle();
-            bundle.putString(EXTRA_TITLE, title);
-            bundle.putString(EXTRA_MESSAGE, message);
-            bundle.putBoolean(EXTRA_CANCELABLE, cancelable);
-            bundle.putBoolean(EXTRA_HIDE_DEFAULT_MESSAGE, hideDefaultMessage);
-            fragment.setArguments(bundle);
+                    Bundle bundle = new Bundle();
+                    bundle.putString(EXTRA_TITLE, title);
+                    bundle.putString(EXTRA_MESSAGE, message);
+                    bundle.putBoolean(EXTRA_CANCELABLE, cancelable);
+                    bundle.putBoolean(EXTRA_HIDE_DEFAULT_MESSAGE, hideDefaultMessage);
+                    fragment.setArguments(bundle);
 
-            fragment.setStyle(STYLE_NORMAL, R.style.LilStyle);
-            fragment.show(fragmentManager, ProgressDialogFragment.class.getSimpleName());
+                    fragment.setStyle(STYLE_NORMAL, R.style.LilStyle);
+
+                    fragment.show(fragmentManager, ProgressDialogFragment.class.getSimpleName());
+                }
+            },
+            delayMillis);
         }
     }
 }
