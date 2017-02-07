@@ -1,4 +1,4 @@
-package ru.justd.library;
+package ru.justd.lilwidgets;
 
 import android.app.Dialog;
 import android.content.Context;

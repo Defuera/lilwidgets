@@ -1,8 +1,8 @@
-package ru.justd.lilwidgets
+package ru.justd.demo
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import ru.justd.library.ProgressDialogFragment
+import ru.justd.lilwidgets.ProgressDialogFragment
 
 class MainActivity : AppCompatActivity() {
 
