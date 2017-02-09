@@ -81,6 +81,11 @@ public class LilLoaderWidget extends FrameLayout {
 
         progressBar = (ProgressBar) findViewById(R.id.progress_bar);
         errorViewContainer = (ViewGroup) findViewById(R.id.error_widget_container);
+
+        int progressColor = Utils.loadColorFromStyle(getContext(), R.style.LilStyle, R.attr.lilLoaderWidgetProgressColor);
+        if (progressColor != 0) {
+            Utils.setProgressColor(progressBar, progressColor);
+        }
     }
 
     @SuppressWarnings("WeakerAccess")

@@ -2,7 +2,6 @@ package ru.justd.lilwidgets;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -78,14 +77,9 @@ public class LilLoaderDialog extends DialogFragment {
             //noinspection ConstantConditions
             dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
-            int progressColor = Utils.loadColorFromStyle(getActivity(), R.style.LilStyle, R.attr.lilProgressColor);
+            int progressColor = Utils.loadColorFromStyle(getActivity(), R.style.LilStyle, R.attr.lilLoaderDialogProgressColor);
             if (progressColor != 0) {
-                progressBar
-                        .getIndeterminateDrawable()
-                        .setColorFilter(
-                                progressColor,
-                                PorterDuff.Mode.SRC_ATOP
-                        );
+                Utils.setProgressColor(progressBar, progressColor);
             }
 
             if (getArguments() != null) {

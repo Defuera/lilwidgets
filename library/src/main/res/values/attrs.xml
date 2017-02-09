@@ -4,13 +4,14 @@
     <declare-styleable name="LilLoaderWidget">
         <attr name="lilNetworkErrorView" format="reference" />
         <attr name="lilNoDataErrorView" format="reference" />
+        <attr name="lilLoaderWidgetProgressColor" format="color" />
     </declare-styleable>
 
     <declare-styleable name="LilLoaderDialog">
         <attr name="lilDefaultMessage" format="string" />
         <attr name="lilTitleStyle" format="reference" />
         <attr name="lilMessageStyle" format="reference" />
-        <attr name="lilProgressColor" format="color" />
+        <attr name="lilLoaderDialogProgressColor" format="color" />
     </declare-styleable>
 
 </resources>

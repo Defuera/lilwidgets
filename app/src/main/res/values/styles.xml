@@ -14,10 +14,11 @@
         <item name="lilDefaultMessage">@string/loading</item>
         <item name="lilTitleStyle">@style/Title</item>
         <item name="lilMessageStyle">@style/Body</item>
-        <item name="lilProgressColor">@color/colorAccent</item>
+        <item name="lilLoaderDialogProgressColor">@color/colorAccent</item>
 
         <item name="lilNetworkErrorView">@layout/widget_network_error</item>
         <item name="lilNoDataErrorView">@layout/widget_no_data_error</item>
+        <item name="lilLoaderWidgetProgressColor">@color/black</item>
     </style>
 
     <style name="Title">
