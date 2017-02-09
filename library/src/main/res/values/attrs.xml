@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <declare-styleable name="LoaderWidget">
-        <attr name="messageTextColor" format="color" />
+    <declare-styleable name="LilLoaderWidget">
+        <attr name="lilNetworkErrorView" format="reference" />
+        <attr name="lilNoDataErrorView" format="reference" />
     </declare-styleable>
 
-    <declare-styleable name="LilProgressDialogFragment">
+    <declare-styleable name="LilLoaderDialog">
         <attr name="lilDefaultMessage" format="string" />
         <attr name="lilTitleStyle" format="reference" />
         <attr name="lilMessageStyle" format="reference" />

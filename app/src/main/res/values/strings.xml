@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">LilWidgets</string>
+
+    <string name="network_error">Отсутствует интернет соединение</string>
+    <string name="empty_message">Нет данных</string>
+    <string name="loading">Loading</string>
+    <string name="error_no_data">No data</string>
 </resources>

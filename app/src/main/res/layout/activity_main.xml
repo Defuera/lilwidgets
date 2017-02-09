@@ -7,15 +7,27 @@
     android:padding="20dp">
 
     <Button
-        android:id="@+id/progress_dialog_button"
+        android:id="@+id/show_loader_dialog"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Display progress dialog" />
 
     <Button
-        android:id="@+id/delay"
+        android:id="@+id/show_loader_dialog_delayed"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="With delay" />
+
+    <Button
+        android:id="@+id/show_loader_widget"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Show loader widget" />
+
+    <ru.justd.lilwidgets.LilLoaderWidget
+        android:id="@+id/loader"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 
 </LinearLayout>

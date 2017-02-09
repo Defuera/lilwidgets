@@ -1,13 +1,10 @@
 package ru.justd.lilwidgets;
 
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.res.TypedArray;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.ColorInt;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -23,7 +20,7 @@ import java.util.List;
 
 /**
  * Created by defuera on 21/06/2016.
- * ProgressDialogFragment is a singleton across the application and must be dismissed before changing view (particulary acitivity)
+ * LilLoaderDialog is a singleton across the application and must be dismissed before changing view (particulary acitivity)
  * You may style and setup the dialog via styles.xml. Find example in the demo app.
  * <pre>
  * {@code
@@ -38,7 +35,7 @@ import java.util.List;
  * </style>
  * }
  */
-public class ProgressDialogFragment extends DialogFragment {
+public class LilLoaderDialog extends DialogFragment {
 
     private static final String EXTRA_TITLE = "EXTRA_TITLE";
     private static final String EXTRA_MESSAGE = "EXTRA_MESSAGE";
@@ -81,7 +78,7 @@ public class ProgressDialogFragment extends DialogFragment {
             //noinspection ConstantConditions
             dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
-            int progressColor = getColor(getActivity(), R.style.LilStyle, R.attr.lilProgressColor);
+            int progressColor = Utils.loadColorFromStyle(getActivity(), R.style.LilStyle, R.attr.lilProgressColor);
             if (progressColor != 0) {
                 progressBar
                         .getIndeterminateDrawable()
@@ -115,27 +112,17 @@ public class ProgressDialogFragment extends DialogFragment {
         }
     }
 
-    @ColorInt
-    private int getColor(Context context, int styleRes, int attrTes) {
-        int[] attrs = new int[] { attrTes };
-        TypedArray ta = context.obtainStyledAttributes(styleRes, attrs);
-        int color = ta.getColor(0, -1);
-        ta.recycle();
-
-        return color;
-    }
-
     public static void dismiss(FragmentManager fragmentManager) {
         Builder.handler.removeCallbacksAndMessages(null);
 
-        ProgressDialogFragment fragment = getTopProgressDialogFragment(fragmentManager);
+        LilLoaderDialog fragment = getTopProgressDialogFragment(fragmentManager);
 
         if (fragment != null) {
             fragment.dismiss();
         }
     }
 
-    private static ProgressDialogFragment getTopProgressDialogFragment(FragmentManager fragmentManager) {
+    private static LilLoaderDialog getTopProgressDialogFragment(FragmentManager fragmentManager) {
         //noinspection RestrictedApi
         List<Fragment> fragments = fragmentManager.getFragments();
         int size = fragments == null ? 0 : fragments.size();
@@ -143,8 +130,8 @@ public class ProgressDialogFragment extends DialogFragment {
         if (size > 0) {
 
             Fragment topFragment = fragments.get(size - 1);
-            if (topFragment instanceof ProgressDialogFragment) {
-                return (ProgressDialogFragment) topFragment;
+            if (topFragment instanceof LilLoaderDialog) {
+                return (LilLoaderDialog) topFragment;
             }
         }
 
@@ -216,12 +203,12 @@ public class ProgressDialogFragment extends DialogFragment {
                     new Runnable() {
                         @Override
                         public void run() {
-                            ProgressDialogFragment fragment = getTopProgressDialogFragment(fragmentManager);
+                            LilLoaderDialog fragment = getTopProgressDialogFragment(fragmentManager);
                             if (fragment != null) {
                                 throw new IllegalStateException("Dialog is already shown");
                             }
 
-                            fragment = new ProgressDialogFragment();
+                            fragment = new LilLoaderDialog();
 
                             Bundle bundle = new Bundle();
                             bundle.putString(EXTRA_TITLE, title);
@@ -232,7 +219,7 @@ public class ProgressDialogFragment extends DialogFragment {
 
                             fragment.setStyle(STYLE_NORMAL, R.style.LilStyle);
 
-                            fragment.show(fragmentManager, ProgressDialogFragment.class.getSimpleName());
+                            fragment.show(fragmentManager, LilLoaderDialog.class.getSimpleName());
                             fragment.setOnDismissListener(dismissListener);
                             fragment.setOnCancelListener(cancelListener);
                         }
