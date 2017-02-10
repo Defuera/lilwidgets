@@ -1,6 +1,8 @@
 package ru.justd.lilwidgets;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +36,9 @@ public class LilLoaderWidget extends FrameLayout {
     private ProgressBar progressBar;
     private ViewGroup errorViewContainer;
 
+    private ClickListener onClickListener;
+    private Error error;
+
     public LilLoaderWidget(Context context) {
         super(context);
         init();
@@ -44,7 +49,30 @@ public class LilLoaderWidget extends FrameLayout {
         init();
     }
 
+    private void init() {
+        inflate(getContext(), R.layout.widget_lil_loader, this);
+
+        progressBar = (ProgressBar) findViewById(R.id.progress_bar);
+        errorViewContainer = (ViewGroup) findViewById(R.id.error_widget_container);
+
+        int progressColor = Utils.loadColorFromStyle(getContext(), R.style.LilStyle, R.attr.lilLoaderWidgetProgressColor);
+        if (progressColor != 0) {
+            Utils.setProgressColor(progressBar, progressColor);
+        }
+
+        setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (onClickListener != null) {
+                    onClickListener.onClick(error);
+                }
+            }
+        });
+    }
+
     public void showLoading() {
+        error = null;
+
         show();
         progressBar.setVisibility(VISIBLE);
         errorViewContainer.setVisibility(GONE);
@@ -59,6 +87,8 @@ public class LilLoaderWidget extends FrameLayout {
     }
 
     public void showError(Error error) {
+        this.error = error;
+
         show();
         progressBar.setVisibility(GONE);
 
@@ -74,18 +104,6 @@ public class LilLoaderWidget extends FrameLayout {
 
     public void hide() {
         setVisibility(GONE);
-    }
-
-    private void init() {
-        inflate(getContext(), R.layout.widget_lil_loader, this);
-
-        progressBar = (ProgressBar) findViewById(R.id.progress_bar);
-        errorViewContainer = (ViewGroup) findViewById(R.id.error_widget_container);
-
-        int progressColor = Utils.loadColorFromStyle(getContext(), R.style.LilStyle, R.attr.lilLoaderWidgetProgressColor);
-        if (progressColor != 0) {
-            Utils.setProgressColor(progressBar, progressColor);
-        }
     }
 
     @SuppressWarnings("WeakerAccess")
@@ -123,6 +141,14 @@ public class LilLoaderWidget extends FrameLayout {
             );
         }
 
+    }
+
+    public void setClickListener(@NonNull ClickListener onClickListener) {
+        this.onClickListener = onClickListener;
+    }
+
+    public interface ClickListener {
+        void onClick(@Nullable Error error);
     }
 
 }

@@ -49,6 +49,14 @@ class MainActivity : AppCompatActivity() {
                     { loader.hide() },
                     4000
             )
+
+            loader.setClickListener(
+                    {
+                        error ->
+                        Toast.makeText(this, error!!.javaClass.simpleName, Toast.LENGTH_SHORT).show()
+                    }
+            )
+
         }
     }
 
