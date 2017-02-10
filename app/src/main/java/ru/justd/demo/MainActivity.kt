@@ -53,7 +53,11 @@ class MainActivity : AppCompatActivity() {
             loader.setClickListener(
                     {
                         error ->
-                        Toast.makeText(this, error!!.javaClass.simpleName, Toast.LENGTH_SHORT).show()
+                        if (error != null){
+                            Toast.makeText(this, error.javaClass.simpleName, Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(this, "loader clicked", Toast.LENGTH_SHORT).show()
+                        }
                     }
             )
 
