@@ -106,6 +106,10 @@ public class LilLoaderDialog extends DialogFragment {
         }
     }
 
+    public static void show(FragmentManager fragmentManager) {
+        new LilLoaderDialog.Builder(fragmentManager).create();
+    }
+
     public static void dismiss(FragmentManager fragmentManager) {
         Builder.handler.removeCallbacksAndMessages(null);
 
