@@ -63,7 +63,7 @@ public class LilLoaderWidget extends FrameLayout {
         setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (onClickListener != null) {
+                if (onClickListener != null && error != null) {
                     onClickListener.onClick(error);
                 }
             }
@@ -143,7 +143,7 @@ public class LilLoaderWidget extends FrameLayout {
 
     }
 
-    public void setClickListener(@NonNull ClickListener onClickListener) {
+    public void setOnErrorClicked(@NonNull ClickListener onClickListener) {
         this.onClickListener = onClickListener;
     }
 

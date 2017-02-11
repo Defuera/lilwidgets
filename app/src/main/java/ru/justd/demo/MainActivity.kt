@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity() {
                     4000
             )
 
-            loader.setClickListener(
+            loader.setOnErrorClicked(
                     {
                         error ->
                         if (error != null){
