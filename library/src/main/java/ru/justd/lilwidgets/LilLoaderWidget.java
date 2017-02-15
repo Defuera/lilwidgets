@@ -1,6 +1,7 @@
 package ru.justd.lilwidgets;
 
 import android.content.Context;
+import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
@@ -49,7 +50,8 @@ public class LilLoaderWidget extends FrameLayout {
         init();
     }
 
-    private void init() {
+    @CallSuper
+    protected void init() {
         inflate(getContext(), R.layout.widget_lil_loader, this);
 
         progressBar = (ProgressBar) findViewById(R.id.progress_bar);
@@ -95,7 +97,7 @@ public class LilLoaderWidget extends FrameLayout {
         errorViewContainer.setVisibility(VISIBLE);
         errorViewContainer.removeAllViews();
 
-        error.inflateErrorView(errorViewContainer);
+        errorViewContainer.addView(error.inflateErrorView(getContext()));
     }
 
     public void show() {
@@ -108,7 +110,7 @@ public class LilLoaderWidget extends FrameLayout {
 
     @SuppressWarnings("WeakerAccess")
     public interface Error {
-        View inflateErrorView(ViewGroup parent);
+        View inflateErrorView(Context context);
     }
 
     private static final class NetworkError implements Error {
@@ -116,12 +118,11 @@ public class LilLoaderWidget extends FrameLayout {
         private NetworkError() {}
 
         @Override
-        public View inflateErrorView(ViewGroup parent) {
-            Context context = parent.getContext();
+        public View inflateErrorView(Context context) {
             return View.inflate(
                     context,
                     Utils.loadLayoutFromStyle(context, R.style.LilStyle, R.attr.lilNetworkErrorView),
-                    parent
+                    null
             );
         }
 
@@ -132,12 +133,11 @@ public class LilLoaderWidget extends FrameLayout {
         private NoDataError() {}
 
         @Override
-        public View inflateErrorView(ViewGroup parent) {
-            Context context = parent.getContext();
+        public View inflateErrorView(Context context) {
             return View.inflate(
                     context,
                     Utils.loadLayoutFromStyle(context, R.style.LilStyle, R.attr.lilNoDataErrorView),
-                    parent
+                    null
             );
         }
 
