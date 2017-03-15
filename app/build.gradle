@@ -1,11 +1,11 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
-def supportVersion = '25.0.1'
+def supportVersion = '25.3.0'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion supportVersion
+    buildToolsVersion "25.0.2"
     defaultConfig {
         applicationId "ru.justd.lilwidgets"
         minSdkVersion 22

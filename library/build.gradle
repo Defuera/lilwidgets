@@ -3,10 +3,10 @@ apply plugin: 'com.github.dcendents.android-maven'
 group='com.github.Defuera'
 
 
-def supportVersion = '25.0.1'
+def supportVersion = '25.3.0'
 android {
     compileSdkVersion 25
-    buildToolsVersion supportVersion
+    buildToolsVersion "25.0.2"
 
     defaultConfig {
         minSdkVersion 15
@@ -27,10 +27,5 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
     compile "com.android.support:appcompat-v7:$supportVersion"
-    compile "com.android.support:recyclerview-v7:$supportVersion"
-    compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
-
-    // UI
-    compile 'com.jakewharton:butterknife:7.0.1'
-    compile 'com.sothree.slidinguppanel:library:3.2.1'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
 }
