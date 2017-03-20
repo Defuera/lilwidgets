@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -18,9 +17,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/padding_16dp"
-        app:layout_constraintBottom_toTopOf="@+id/progress_bar"
-        app:layout_constraintLeft_toLeftOf="@+id/progress_bar"
-        app:layout_constraintTop_toTopOf="parent"
+        android:layout_alignLeft="@+id/progress_bar"
+        android:layout_alignStart="@+id/progress_bar"
+        android:layout_alignParentTop="true"
         tools:text="Title" />
 
     <ProgressBar
@@ -30,9 +29,11 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/padding_16dp"
         android:layout_marginStart="@dimen/padding_16dp"
-        app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintVertical_chainStyle="packed" />
+        android:layout_below="@+id/title"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true" />
 
     <TextView
         android:id="@+id/message"
@@ -42,9 +43,10 @@
         android:layout_marginLeft="@dimen/padding_16dp"
         android:layout_marginStart="@dimen/padding_16dp"
         android:text="?attr/lilDefaultMessage"
-        app:layout_constraintBottom_toBottomOf="@+id/progress_bar"
-        app:layout_constraintLeft_toRightOf="@+id/progress_bar"
-        app:layout_constraintTop_toTopOf="@+id/progress_bar"
+        android:layout_alignBottom="@+id/progress_bar"
+        android:layout_toRightOf="@+id/progress_bar"
+        android:layout_toEndOf="@+id/progress_bar"
+        android:layout_alignTop="@+id/progress_bar"
         tools:text="This is a dialog message" />
 
-</android.support.constraint.ConstraintLayout>
+</RelativeLayout>
