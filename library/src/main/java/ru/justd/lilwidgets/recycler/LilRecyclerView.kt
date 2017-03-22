@@ -5,10 +5,21 @@ import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
 import android.util.AttributeSet
 import ru.justd.lilwidgets.recycler.LilRecyclerView.DragTrigger.HANDLE
-import ru.justd.lilwidgets.recycler.LilRecyclerView.DragTrigger.LONG_TAP
+import ru.justd.lilwidgets.recycler.LilRecyclerView.DragTrigger.LONG_PRESS
 
 /**
  * Created by shc on 21/03/2017.
+ *
+ * This extension of [RecyclerView] allows you to drag and drop it's items.
+ *
+ * It supports two modes:
+ * + drag on long press [LONG_PRESS]
+ * + drag on handle touch [HANDLE]
+ * Switch them using [dragTrigger].
+ *
+ * In [LONG_PRESS] mode drag starts on long press on list's item.
+ * [HANDLE] mode allows you to set handle view's id (using [setHandleViewId] method)
+ * tap on which initiates drag's start.
  */
 class LilRecyclerView @JvmOverloads constructor(
         context: Context,
@@ -21,9 +32,9 @@ class LilRecyclerView @JvmOverloads constructor(
 
     var adapterWrapper: AdapterWrapper<*>? = null
 
-    var dragTrigger: DragTrigger = LONG_TAP
+    var dragTrigger: DragTrigger = LONG_PRESS
         set(value) {
-            itemTouchCallback.longPressEnabled = value == LONG_TAP
+            itemTouchCallback.longPressEnabled = value == LONG_PRESS
             adapterWrapper?.onStartDragListener =
                     if (value == HANDLE) {
                         object : AdapterWrapper.OnStartDragListener {
@@ -31,8 +42,7 @@ class LilRecyclerView @JvmOverloads constructor(
                                 itemTouchHelper.startDrag(viewHolder)
                             }
                         }
-                    }
-                    else null
+                    } else null
         }
 
     init {
@@ -53,7 +63,7 @@ class LilRecyclerView @JvmOverloads constructor(
     }
 
     enum class DragTrigger {
-        LONG_TAP, HANDLE
+        LONG_PRESS, HANDLE
     }
 
 }
