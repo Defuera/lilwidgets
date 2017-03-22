@@ -18,8 +18,12 @@ import ru.justd.lilwidgets.recycler.LilRecyclerView.DragTrigger.LONG_PRESS
  * Switch them using [dragTrigger].
  *
  * In [LONG_PRESS] mode drag starts on long press on list's item.
+ *
  * [HANDLE] mode allows you to set handle view's id (using [setHandleViewId] method)
  * tap on which initiates drag's start.
+ *
+ * *NOTE:* don't forget to set [moveCallback] and update your adapter's model there
+ * to prevent data inconsistency.
  */
 class LilRecyclerView @JvmOverloads constructor(
         context: Context,
@@ -31,6 +35,7 @@ class LilRecyclerView @JvmOverloads constructor(
     val itemTouchHelper = ItemTouchHelper(itemTouchCallback)
 
     var adapterWrapper: AdapterWrapper<*>? = null
+    var moveCallback: LilMoveCallback? = null
 
     var dragTrigger: DragTrigger = LONG_PRESS
         set(value) {
@@ -55,6 +60,7 @@ class LilRecyclerView @JvmOverloads constructor(
 
     override fun onItemMoved(current: ViewHolder, target: ViewHolder) {
         adapter?.notifyItemMoved(current.adapterPosition, target.adapterPosition)
+        moveCallback?.onItemMoved(current, target)
     }
 
     override fun setAdapter(adapter: Adapter<*>) {
