@@ -31,6 +31,10 @@ class MainActivity : AppCompatActivity() {
                     .create()
         }
 
+        findViewById(R.id.open_list).setOnClickListener {
+            ListActivity.start(this)
+        }
+
         findViewById(R.id.show_loader_widget).setOnClickListener {
 
             val loader = findViewById(R.id.loader) as LilLoaderWidget
