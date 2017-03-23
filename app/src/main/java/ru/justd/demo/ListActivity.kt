@@ -8,7 +8,6 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import ru.justd.lilwidgets.recycler.LilMoveCallback
 import ru.justd.lilwidgets.recycler.LilRecyclerView
-import ru.justd.lilwidgets.recycler.LilRecyclerView.DragTrigger.HANDLE
 
 /**
  * Created by shc on 21/03/2017.
@@ -23,10 +22,8 @@ class ListActivity : Activity() {
         val testAdapter = TestAdapter()
 
         list.adapter = testAdapter
-        list.layoutManager = LinearLayoutManager(this)
 
-        list.dragTrigger = HANDLE
-        list.handleViewId = R.id.handle
+        list.setDragModeHandle(R.id.handle)
 
         list.moveCallback = object : LilMoveCallback {
             override fun onItemMoved(current: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder) {

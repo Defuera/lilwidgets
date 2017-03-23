@@ -2,12 +2,13 @@ package ru.justd.lilwidgets.recycler
 
 import android.content.Context
 import android.graphics.Rect
+import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
 import android.util.AttributeSet
 import android.view.MotionEvent
-import ru.justd.lilwidgets.recycler.LilRecyclerView.DragTrigger.HANDLE
-import ru.justd.lilwidgets.recycler.LilRecyclerView.DragTrigger.LONG_PRESS
+import ru.justd.lilwidgets.recycler.LilRecyclerView.DragMode.HANDLE
+import ru.justd.lilwidgets.recycler.LilRecyclerView.DragMode.LONG_PRESS
 
 /**
  * Created by shc on 21/03/2017.
@@ -17,7 +18,7 @@ import ru.justd.lilwidgets.recycler.LilRecyclerView.DragTrigger.LONG_PRESS
  * It supports two modes:
  * + drag on long press [LONG_PRESS]
  * + drag on handle touch [HANDLE]
- * Switch them using [dragTrigger].
+ * Switch them using [dragMode].
  *
  * In [LONG_PRESS] mode drag starts on long press on list's item.
  *
@@ -34,19 +35,30 @@ class LilRecyclerView @JvmOverloads constructor(
 ) : RecyclerView(context, attrs, defStyleAttr), LilMoveCallback {
 
     var moveCallback: LilMoveCallback? = null
-    var handleViewId: Int? = null
-    var dragTrigger: DragTrigger = LONG_PRESS
+
+    private val itemTouchCallback = LilItemTouchHelperCallback(this)
+    private val itemTouchHelper = ItemTouchHelper(itemTouchCallback)
+
+    private var handleViewId: Int? = null
+    private var dragMode: DragMode = LONG_PRESS
         set(value) {
             field = value
             itemTouchCallback.longPressEnabled = value == LONG_PRESS
         }
 
-    private val itemTouchCallback = LilItemTouchHelperCallback(this)
-    private val itemTouchHelper = ItemTouchHelper(itemTouchCallback)
-
     init {
+        layoutManager = LinearLayoutManager(context)
         itemTouchHelper.attachToRecyclerView(this)
         addOnItemTouchListener(LilItemTouchListener())
+    }
+
+    fun setDragModeLongPress() {
+        dragMode = LONG_PRESS
+    }
+
+    fun setDragModeHandle(handleViewId: Int) {
+        dragMode = HANDLE
+        this.handleViewId = handleViewId
     }
 
     override fun onItemMoved(current: ViewHolder, target: ViewHolder) {
@@ -54,14 +66,23 @@ class LilRecyclerView @JvmOverloads constructor(
         moveCallback?.onItemMoved(current, target)
     }
 
+    override fun setLayoutManager(lm: LayoutManager?) {
+        if (layoutManager == null) {
+            super.setLayoutManager(lm)
+        } else {
+            throw IllegalArgumentException("LilRecyclerView works only with vertical " +
+                    "LinearLayoutManager at the moment, and it's preset. Sorry.")
+        }
+    }
+
     /**
      * The purpose of this listener is to start drag if [HANDLE] mode is active and user
      * touches handle view
      */
-    inner class LilItemTouchListener :  OnItemTouchListener {
+    private inner class LilItemTouchListener :  OnItemTouchListener {
 
         override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
-            if (dragTrigger == HANDLE
+            if (dragMode == HANDLE
                     && handleViewId != null
                     && e.action == MotionEvent.ACTION_DOWN) {
 
@@ -90,7 +111,7 @@ class LilRecyclerView @JvmOverloads constructor(
 
     }
 
-    enum class DragTrigger {
+    enum class DragMode {
         LONG_PRESS, HANDLE
     }
 
