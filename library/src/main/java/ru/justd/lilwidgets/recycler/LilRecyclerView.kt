@@ -22,7 +22,7 @@ import ru.justd.lilwidgets.recycler.LilRecyclerView.DragMode.LONG_PRESS
  *
  * In [LONG_PRESS] mode drag starts on long press on list's item.
  *
- * [HANDLE] mode allows you to set handle view's id (using [setHandleViewId] method)
+ * [HANDLE] mode allows you to set handle view's id (using [setDragModeHandle] method)
  * tap on which initiates drag's start.
  *
  * *NOTE:* don't forget to set [moveCallback] and update your adapter's model there
