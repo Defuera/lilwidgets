@@ -1,9 +1,11 @@
 package ru.justd.lilwidgets.recycler
 
 import android.content.Context
+import android.graphics.Rect
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
 import android.util.AttributeSet
+import android.view.MotionEvent
 import ru.justd.lilwidgets.recycler.LilRecyclerView.DragTrigger.HANDLE
 import ru.justd.lilwidgets.recycler.LilRecyclerView.DragTrigger.LONG_PRESS
 
@@ -34,28 +36,18 @@ class LilRecyclerView @JvmOverloads constructor(
     val itemTouchCallback = LilItemTouchHelperCallback(this)
     val itemTouchHelper = ItemTouchHelper(itemTouchCallback)
 
-    var adapterWrapper: AdapterWrapper<*>? = null
     var moveCallback: LilMoveCallback? = null
+    var handleViewId: Int? = null
 
     var dragTrigger: DragTrigger = LONG_PRESS
         set(value) {
+            field = value
             itemTouchCallback.longPressEnabled = value == LONG_PRESS
-            adapterWrapper?.onStartDragListener =
-                    if (value == HANDLE) {
-                        object : AdapterWrapper.OnStartDragListener {
-                            override fun onStartDrag(viewHolder: ViewHolder) {
-                                itemTouchHelper.startDrag(viewHolder)
-                            }
-                        }
-                    } else null
         }
 
     init {
         itemTouchHelper.attachToRecyclerView(this)
-    }
-
-    fun setHandleViewId(id: Int) {
-        adapterWrapper?.handleId = id
+        addOnItemTouchListener(LilItemTouchListener())
     }
 
     override fun onItemMoved(current: ViewHolder, target: ViewHolder) {
@@ -63,9 +55,40 @@ class LilRecyclerView @JvmOverloads constructor(
         moveCallback?.onItemMoved(current, target)
     }
 
-    override fun setAdapter(adapter: Adapter<*>) {
-        adapterWrapper = AdapterWrapper(adapter)
-        super.setAdapter(adapterWrapper)
+    /**
+     * The purpose of this listener is to start drag if [HANDLE] mode is active and user
+     * touched handle view
+     */
+    inner class LilItemTouchListener :  OnItemTouchListener {
+
+        override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
+            if (dragTrigger == HANDLE
+                    && handleViewId != null
+                    && e.action == MotionEvent.ACTION_DOWN) {
+
+                val view = findChildViewUnder(e.x, e.y)
+                val handle = view?.findViewById(handleViewId!!)
+
+                val handleRect = Rect()
+                handle?.getHitRect(handleRect)
+
+                val xInParent = e.x - view.left
+                val yInParent = e.y - view.top
+
+                if (handleRect.contains(xInParent.toInt(), yInParent.toInt())) {
+                    val viewHolder = getChildViewHolder(view)
+                    itemTouchHelper.startDrag(viewHolder)
+                    return true
+                }
+            }
+
+            return false
+        }
+
+        override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) { }
+
+        override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) { }
+
     }
 
     enum class DragTrigger {

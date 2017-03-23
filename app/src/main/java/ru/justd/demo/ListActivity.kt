@@ -22,7 +22,7 @@ class ListActivity : Activity() {
         list.layoutManager = LinearLayoutManager(this)
 
         list.dragTrigger = HANDLE
-        list.setHandleViewId(R.id.handle)
+        list.handleViewId = R.id.handle
     }
 
     companion object {
