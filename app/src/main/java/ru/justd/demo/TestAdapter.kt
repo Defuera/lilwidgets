@@ -20,8 +20,8 @@ class TestAdapter : RecyclerView.Adapter<TestAdapter.TestViewHolder>() {
 
     override fun getItemCount(): Int = items.count()
 
-    override fun onBindViewHolder(holder: TestViewHolder?, position: Int) {
-        holder?.bind(items[position])
+    override fun onBindViewHolder(holder: TestViewHolder, position: Int) {
+        holder.bind(items[position])
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TestViewHolder =
