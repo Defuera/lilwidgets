@@ -31,16 +31,16 @@ class TestAdapter : RecyclerView.Adapter<TestAdapter.TestViewHolder>() {
                             .inflate(R.layout.item_demo, parent, false)
             )
 
+    fun swapItems(from: Int, to: Int) {
+        Collections.swap(items, from, to)
+    }
+
     inner class TestViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
 
         fun bind(value: Int) {
             (view.findViewById(R.id.text) as TextView).text = value.toString()
         }
 
-    }
-
-    fun swapItems(from: Int, to: Int) {
-        Collections.swap(items, from, to)
     }
 
 }

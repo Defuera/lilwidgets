@@ -9,7 +9,7 @@ import android.util.Log
 /**
  * Created by shc on 22/03/2017.
  */
-class LilItemTouchHelperCallback(
+internal class LilItemTouchHelperCallback(
         val callback: LilMoveCallback
 ) : ItemTouchHelper.Callback() {
 
@@ -39,5 +39,7 @@ class LilItemTouchHelperCallback(
     }
 
     override fun isLongPressDragEnabled(): Boolean = longPressEnabled
+
+
 
 }
