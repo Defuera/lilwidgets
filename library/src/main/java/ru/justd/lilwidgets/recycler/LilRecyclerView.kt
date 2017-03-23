@@ -33,17 +33,16 @@ class LilRecyclerView @JvmOverloads constructor(
         defStyleAttr: Int = 0
 ) : RecyclerView(context, attrs, defStyleAttr), LilMoveCallback {
 
-    val itemTouchCallback = LilItemTouchHelperCallback(this)
-    val itemTouchHelper = ItemTouchHelper(itemTouchCallback)
-
     var moveCallback: LilMoveCallback? = null
     var handleViewId: Int? = null
-
     var dragTrigger: DragTrigger = LONG_PRESS
         set(value) {
             field = value
             itemTouchCallback.longPressEnabled = value == LONG_PRESS
         }
+
+    private val itemTouchCallback = LilItemTouchHelperCallback(this)
+    private val itemTouchHelper = ItemTouchHelper(itemTouchCallback)
 
     init {
         itemTouchHelper.attachToRecyclerView(this)
@@ -57,7 +56,7 @@ class LilRecyclerView @JvmOverloads constructor(
 
     /**
      * The purpose of this listener is to start drag if [HANDLE] mode is active and user
-     * touched handle view
+     * touches handle view
      */
     inner class LilItemTouchListener :  OnItemTouchListener {
 
