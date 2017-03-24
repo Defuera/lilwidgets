@@ -25,18 +25,25 @@ import ru.justd.lilwidgets.recycler.LilRecyclerView.DragMode.LONG_PRESS
  * [HANDLE] mode allows you to set handle view's id (using [setDragModeHandle] method)
  * tap on which initiates drag's start.
  *
- * *NOTE:* don't forget to set [moveCallback] and update your adapter's model there
+ * *NOTE:* don't forget to set [moveListener] and update your adapter's model there
  * to prevent data inconsistency.
  */
 class LilRecyclerView @JvmOverloads constructor(
         context: Context,
         attrs: AttributeSet? = null,
         defStyleAttr: Int = 0
-) : RecyclerView(context, attrs, defStyleAttr), LilMoveCallback {
+) : RecyclerView(context, attrs, defStyleAttr) {
 
-    var moveCallback: LilMoveCallback? = null
+    var moveListener: MoveListener? = null
 
-    private val itemTouchCallback = LilItemTouchHelperCallback(this)
+    private val itemTouchCallback = LilItemTouchHelperCallback(
+            object : MoveListener {
+                override fun onItemMoved(current: ViewHolder, target: ViewHolder) {
+                    adapter?.notifyItemMoved(current.adapterPosition, target.adapterPosition)
+                    moveListener?.onItemMoved(current, target)
+                }
+            }
+    )
     private val itemTouchHelper = ItemTouchHelper(itemTouchCallback)
 
     private var handleViewId: Int? = null
@@ -59,11 +66,6 @@ class LilRecyclerView @JvmOverloads constructor(
     fun setDragModeHandle(handleViewId: Int) {
         dragMode = HANDLE
         this.handleViewId = handleViewId
-    }
-
-    override fun onItemMoved(current: ViewHolder, target: ViewHolder) {
-        adapter?.notifyItemMoved(current.adapterPosition, target.adapterPosition)
-        moveCallback?.onItemMoved(current, target)
     }
 
     override fun setLayoutManager(lm: LayoutManager?) {
@@ -108,6 +110,23 @@ class LilRecyclerView @JvmOverloads constructor(
         override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) { }
 
         override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) { }
+
+    }
+
+    /**
+     * Created by shc on 22/03/2017.
+     *
+     * Callback that notifies client about items' movements in list
+     */
+    interface MoveListener {
+
+        /**
+         * Notifies client that [current] and [target] items were swapped
+         *
+         * @param current currently dragging item
+         * @param target item that [current] crosses in this moment
+         */
+        fun onItemMoved(current: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder)
 
     }
 

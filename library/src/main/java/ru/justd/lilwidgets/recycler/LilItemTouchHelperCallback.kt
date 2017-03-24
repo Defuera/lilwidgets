@@ -4,12 +4,13 @@ import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
 import android.support.v7.widget.helper.ItemTouchHelper.DOWN
 import android.support.v7.widget.helper.ItemTouchHelper.UP
+import ru.justd.lilwidgets.recycler.LilRecyclerView.MoveListener
 
 /**
  * Created by shc on 22/03/2017.
  */
 internal class LilItemTouchHelperCallback(
-        val callback: LilMoveCallback
+        val callback: MoveListener
 ) : ItemTouchHelper.Callback() {
 
     internal var longPressEnabled: Boolean = true
