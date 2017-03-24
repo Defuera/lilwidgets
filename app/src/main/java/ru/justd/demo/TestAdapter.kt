@@ -5,12 +5,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import ru.justd.lilwidgets.recycler.LilRecyclerView
 import java.util.*
 
 /**
  * Created by shc on 21/03/2017.
  */
-class TestAdapter : RecyclerView.Adapter<TestAdapter.TestViewHolder>() {
+class TestAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>(), LilRecyclerView.MoveListener {
+
+    val typeHeader = 0
+    val typeRegular = 1
 
     val items = ArrayList<Int>()
 
@@ -18,29 +22,42 @@ class TestAdapter : RecyclerView.Adapter<TestAdapter.TestViewHolder>() {
         items += 0..50
     }
 
+    override fun getItemViewType(position: Int): Int =
+            if (position == 0) typeHeader else typeRegular
+
     override fun getItemCount(): Int = items.count()
 
-    override fun onBindViewHolder(holder: TestViewHolder, position: Int) {
-        holder.bind(items[position])
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        if (holder is RegularViewHolder) {
+            holder.bind(items[position])
+        }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TestViewHolder =
-            TestViewHolder(
-                    LayoutInflater
-                            .from(parent.context)
-                            .inflate(R.layout.item_demo, parent, false)
-            )
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =
+            when (viewType) {
+                typeHeader -> FixedViewHolder(LayoutInflater
+                        .from(parent.context)
+                        .inflate(R.layout.item_demo_header, parent, false))
+                typeRegular -> RegularViewHolder(LayoutInflater
+                        .from(parent.context)
+                        .inflate(R.layout.item_demo, parent, false))
+                else -> throw IllegalArgumentException("unknown item type")
+            }
 
-    fun swapItems(from: Int, to: Int) {
-        Collections.swap(items, from, to)
+    override fun onItemMoved(current: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder) {
+        Collections.swap(items, current.adapterPosition, target.adapterPosition)
     }
 
-    inner class TestViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
+    fun itemIsDraggable(holder: RecyclerView.ViewHolder): Boolean = holder.itemViewType == typeRegular
+
+    inner class RegularViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
 
         fun bind(value: Int) {
             (view.findViewById(R.id.text) as TextView).text = value.toString()
         }
 
     }
+
+    inner class FixedViewHolder(view: View) : RecyclerView.ViewHolder(view)
 
 }

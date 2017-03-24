@@ -27,6 +27,11 @@ import ru.justd.lilwidgets.recycler.LilRecyclerView.DragMode.LONG_PRESS
  *
  * *NOTE:* don't forget to set [moveListener] and update your adapter's model there
  * to prevent data inconsistency.
+ *
+ * You can face situation when not any item can be moved or replaced. In these cases you should
+ * set following predicates:
+ * + [dragPredicate] to determine which items can be moved
+ * + [replacePredicate] to determine if target item can be replaced with current one.
  */
 class LilRecyclerView @JvmOverloads constructor(
         context: Context,
@@ -36,11 +41,29 @@ class LilRecyclerView @JvmOverloads constructor(
 
     var moveListener: MoveListener? = null
 
+    /**
+     * Predicate that determines if [target] item can be replaced with [current] one
+     * @param current item which is currently moving
+     * @param target item which is crossed by [current] now and which potentially can be replaced
+     */
+    var replacePredicate: ((current: ViewHolder, target: ViewHolder) -> Boolean)? = null
+
+    /**
+     * Predicate that determines if given item can be moved
+     */
+    var dragPredicate: ((ViewHolder) -> Boolean)? = null
+        set(value) {
+            field = value
+            itemTouchCallback.dragPredicate = value
+        }
+
     private val itemTouchCallback = LilItemTouchHelperCallback(
             object : MoveListener {
                 override fun onItemMoved(current: ViewHolder, target: ViewHolder) {
-                    adapter?.notifyItemMoved(current.adapterPosition, target.adapterPosition)
-                    moveListener?.onItemMoved(current, target)
+                    if (replacePredicate?.invoke(current, target) ?: true) {
+                        adapter?.notifyItemMoved(current.adapterPosition, target.adapterPosition)
+                        moveListener?.onItemMoved(current, target)
+                    }
                 }
             }
     )
@@ -68,7 +91,7 @@ class LilRecyclerView @JvmOverloads constructor(
         this.handleViewId = handleViewId
     }
 
-    override fun setLayoutManager(lm: LayoutManager?) {
+    override fun setLayoutManager(lm: LayoutManager) {
         if (layoutManager == null) {
             super.setLayoutManager(lm)
         } else {
@@ -81,7 +104,7 @@ class LilRecyclerView @JvmOverloads constructor(
      * The purpose of this listener is to start drag if [HANDLE] mode is active and user
      * touches handle view
      */
-    private inner class LilItemTouchListener :  OnItemTouchListener {
+    private inner class LilItemTouchListener : OnItemTouchListener {
 
         override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
             if (dragMode == HANDLE
@@ -99,17 +122,19 @@ class LilRecyclerView @JvmOverloads constructor(
 
                 if (handleRect.contains(xInParent.toInt(), yInParent.toInt())) {
                     val viewHolder = getChildViewHolder(view)
-                    itemTouchHelper.startDrag(viewHolder)
-                    return true
+                    if (dragPredicate?.invoke(viewHolder) ?: true) {
+                        itemTouchHelper.startDrag(viewHolder)
+                        return true
+                    }
                 }
             }
 
             return false
         }
 
-        override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) { }
+        override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {}
 
-        override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) { }
+        override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) {}
 
     }
 
