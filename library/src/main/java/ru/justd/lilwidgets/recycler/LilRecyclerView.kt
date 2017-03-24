@@ -31,7 +31,7 @@ import ru.justd.lilwidgets.recycler.LilRecyclerView.DragMode.LONG_PRESS
  * You can face situation when not any item can be moved or replaced. In these cases you should
  * set following predicates:
  * + [dragPredicate] to determine which items can be moved
- * + [replacePredicate] to determine which items can be replaced
+ * + [replacePredicate] to determine if target item can be replaced with current one.
  */
 class LilRecyclerView @JvmOverloads constructor(
         context: Context,
@@ -40,7 +40,17 @@ class LilRecyclerView @JvmOverloads constructor(
 ) : RecyclerView(context, attrs, defStyleAttr) {
 
     var moveListener: MoveListener? = null
-    var replacePredicate: ((ViewHolder) -> Boolean)? = null
+
+    /**
+     * Predicate that determines if [target] item can be replaced with [current] one
+     * @param current item which is currently moving
+     * @param target item which is crossed by [current] now and which potentially can be replaced
+     */
+    var replacePredicate: ((current: ViewHolder, target: ViewHolder) -> Boolean)? = null
+
+    /**
+     * Predicate that determines if given item can be moved
+     */
     var dragPredicate: ((ViewHolder) -> Boolean)? = null
         set(value) {
             field = value
@@ -50,7 +60,7 @@ class LilRecyclerView @JvmOverloads constructor(
     private val itemTouchCallback = LilItemTouchHelperCallback(
             object : MoveListener {
                 override fun onItemMoved(current: ViewHolder, target: ViewHolder) {
-                    if (replacePredicate?.invoke(target) ?: true) {
+                    if (replacePredicate?.invoke(current, target) ?: true) {
                         adapter?.notifyItemMoved(current.adapterPosition, target.adapterPosition)
                         moveListener?.onItemMoved(current, target)
                     }
@@ -81,7 +91,7 @@ class LilRecyclerView @JvmOverloads constructor(
         this.handleViewId = handleViewId
     }
 
-    override fun setLayoutManager(lm: LayoutManager?) {
+    override fun setLayoutManager(lm: LayoutManager) {
         if (layoutManager == null) {
             super.setLayoutManager(lm)
         } else {
