@@ -11,7 +11,7 @@ import ru.justd.lilwidgets.recycler.LilRecyclerView.MoveListener
  * Created by shc on 22/03/2017.
  */
 internal class LilItemTouchHelperCallback(
-        val callback: MoveListener
+        val listener: MoveListener
 ) : ItemTouchHelper.Callback() {
 
     internal var longPressEnabled: Boolean = true
@@ -28,7 +28,7 @@ internal class LilItemTouchHelperCallback(
         val targetPosition = target.adapterPosition
         if (targetPosition != lastTargetPosition) {
             lastTargetPosition = targetPosition
-            callback.onItemMoved(viewHolder, target)
+            listener.onItemMoved(viewHolder, target)
         }
 
         return true

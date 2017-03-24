@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.widget.RecyclerView
 import ru.justd.lilwidgets.recycler.LilRecyclerView
 
 /**
@@ -20,14 +19,11 @@ class ListActivity : Activity() {
         val testAdapter = TestAdapter()
 
         list.adapter = testAdapter
+        list.moveListener = testAdapter
+        list.dragPredicate = { testAdapter.itemIsDraggable(it) }
+        list.replacePredicate = { testAdapter.itemIsDraggable(it) }
 
         list.setDragModeHandle(R.id.handle)
-
-        list.moveListener = object : LilRecyclerView.MoveListener {
-            override fun onItemMoved(current: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder) {
-                testAdapter.swapItems(current.adapterPosition, target.adapterPosition)
-            }
-        }
     }
 
     companion object {
