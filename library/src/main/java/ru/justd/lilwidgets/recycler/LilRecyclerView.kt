@@ -35,12 +35,20 @@ class LilRecyclerView @JvmOverloads constructor(
 ) : RecyclerView(context, attrs, defStyleAttr) {
 
     var moveListener: MoveListener? = null
+    var replacePredicate: ((ViewHolder) -> Boolean)? = null
+    var dragPredicate: ((ViewHolder) -> Boolean)? = null
+        set(value) {
+            field = value
+            itemTouchCallback.dragPredicate = value
+        }
 
     private val itemTouchCallback = LilItemTouchHelperCallback(
             object : MoveListener {
                 override fun onItemMoved(current: ViewHolder, target: ViewHolder) {
-                    adapter?.notifyItemMoved(current.adapterPosition, target.adapterPosition)
-                    moveListener?.onItemMoved(current, target)
+                    if (replacePredicate?.invoke(target) ?: true) {
+                        adapter?.notifyItemMoved(current.adapterPosition, target.adapterPosition)
+                        moveListener?.onItemMoved(current, target)
+                    }
                 }
             }
     )
@@ -81,7 +89,7 @@ class LilRecyclerView @JvmOverloads constructor(
      * The purpose of this listener is to start drag if [HANDLE] mode is active and user
      * touches handle view
      */
-    private inner class LilItemTouchListener :  OnItemTouchListener {
+    private inner class LilItemTouchListener : OnItemTouchListener {
 
         override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
             if (dragMode == HANDLE
@@ -99,17 +107,19 @@ class LilRecyclerView @JvmOverloads constructor(
 
                 if (handleRect.contains(xInParent.toInt(), yInParent.toInt())) {
                     val viewHolder = getChildViewHolder(view)
-                    itemTouchHelper.startDrag(viewHolder)
-                    return true
+                    if (dragPredicate?.invoke(viewHolder) ?: true) {
+                        itemTouchHelper.startDrag(viewHolder)
+                        return true
+                    }
                 }
             }
 
             return false
         }
 
-        override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) { }
+        override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {}
 
-        override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) { }
+        override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) {}
 
     }
 
