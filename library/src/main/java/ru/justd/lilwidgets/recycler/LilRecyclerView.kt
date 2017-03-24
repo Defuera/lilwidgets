@@ -27,6 +27,11 @@ import ru.justd.lilwidgets.recycler.LilRecyclerView.DragMode.LONG_PRESS
  *
  * *NOTE:* don't forget to set [moveListener] and update your adapter's model there
  * to prevent data inconsistency.
+ *
+ * You can face situation when not any item can be moved or replaced. In these cases you should
+ * set following predicates:
+ * + [dragPredicate] to determine which items can be moved
+ * + [replacePredicate] to determine which items can be replaced
  */
 class LilRecyclerView @JvmOverloads constructor(
         context: Context,
