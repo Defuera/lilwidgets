@@ -33,7 +33,7 @@ import ru.justd.lilwidgets.recycler.LilRecyclerView.DragMode.LONG_PRESS
  * + [dragPredicate] to determine which items can be moved
  * + [replacePredicate] to determine if target item can be replaced with current one.
  */
-class LilRecyclerView @JvmOverloads constructor(
+open class LilRecyclerView @JvmOverloads constructor(
         context: Context,
         attrs: AttributeSet? = null,
         defStyleAttr: Int = 0
