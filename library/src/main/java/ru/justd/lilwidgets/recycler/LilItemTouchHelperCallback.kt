@@ -12,7 +12,7 @@ internal class LilItemTouchHelperCallback(
         val listener: MoveListener
 ) : ItemTouchHelper.Callback() {
 
-    internal var longPressEnabled: Boolean = true
+    internal var longPressEnabled: Boolean = false
     internal var dragPredicate: ((ViewHolder) -> Boolean)? = null
     internal var dragFlags: Int = 0
 
