@@ -3,8 +3,6 @@ package ru.justd.lilwidgets.recycler
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.ViewHolder
 import android.support.v7.widget.helper.ItemTouchHelper
-import android.support.v7.widget.helper.ItemTouchHelper.DOWN
-import android.support.v7.widget.helper.ItemTouchHelper.UP
 import ru.justd.lilwidgets.recycler.LilRecyclerView.MoveListener
 
 /**
@@ -16,12 +14,15 @@ internal class LilItemTouchHelperCallback(
 
     internal var longPressEnabled: Boolean = true
     internal var dragPredicate: ((ViewHolder) -> Boolean)? = null
+    internal var dragFlags: Int = 0
 
     private var lastTargetPosition: Int = -1
 
     override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: ViewHolder): Int {
-        val dragFlag = if (dragPredicate?.invoke(viewHolder) ?: true) (UP or DOWN) else 0
-        return makeMovementFlags(dragFlag, 0)
+        return makeMovementFlags(
+                if (dragPredicate?.invoke(viewHolder) ?: true) dragFlags else 0,
+                0
+        )
     }
 
     override fun onMove(recyclerView: RecyclerView, viewHolder: ViewHolder, target: ViewHolder): Boolean {
