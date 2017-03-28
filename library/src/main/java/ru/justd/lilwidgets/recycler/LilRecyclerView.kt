@@ -71,7 +71,7 @@ open class LilRecyclerView @JvmOverloads constructor(
     private val itemTouchHelper = ItemTouchHelper(itemTouchCallback)
 
     private var handleViewId: Int? = null
-    private var dragMode: DragMode = LONG_PRESS
+    private var dragMode: DragMode = NONE
         set(value) {
             field = value
             itemTouchCallback.longPressEnabled = value == LONG_PRESS
