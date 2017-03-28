@@ -2,13 +2,14 @@ package ru.justd.lilwidgets.recycler
 
 import android.content.Context
 import android.graphics.Rect
-import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.StaggeredGridLayoutManager
 import android.support.v7.widget.helper.ItemTouchHelper
+import android.support.v7.widget.helper.ItemTouchHelper.*
 import android.util.AttributeSet
 import android.view.MotionEvent
-import ru.justd.lilwidgets.recycler.LilRecyclerView.DragMode.HANDLE
-import ru.justd.lilwidgets.recycler.LilRecyclerView.DragMode.LONG_PRESS
+import ru.justd.lilwidgets.recycler.LilRecyclerView.DragMode.*
 
 /**
  * Created by shc on 21/03/2017.
@@ -77,7 +78,6 @@ open class LilRecyclerView @JvmOverloads constructor(
         }
 
     init {
-        layoutManager = LinearLayoutManager(context)
         itemTouchHelper.attachToRecyclerView(this)
         addOnItemTouchListener(LilItemTouchListener())
     }
@@ -91,13 +91,29 @@ open class LilRecyclerView @JvmOverloads constructor(
         this.handleViewId = handleViewId
     }
 
+    fun setDragModeNone() {
+        dragMode = NONE
+        this.handleViewId = null
+    }
+
     override fun setLayoutManager(lm: LayoutManager) {
-        if (layoutManager == null) {
-            super.setLayoutManager(lm)
-        } else {
-            throw IllegalArgumentException("LilRecyclerView works only with vertical " +
-                    "LinearLayoutManager at the moment, and it's preset. Sorry.")
+        super.setLayoutManager(lm)
+        setupDragFlags(lm)
+    }
+
+    private fun setupDragFlags(lm: LayoutManager) {
+        val allowVerticalDrag = lm.canScrollVertically()
+        val allowHorizontalDrag = lm.canScrollHorizontally()
+        val isMultiColumn = when (lm) {
+            is GridLayoutManager -> lm.spanCount > 1
+            is StaggeredGridLayoutManager -> lm.spanCount > 1
+            else -> false
         }
+
+        val verticalDragFlags = if (allowVerticalDrag) (UP or DOWN) else 0
+        val horizontalDragFlags = if (allowHorizontalDrag or isMultiColumn) (LEFT or RIGHT) else 0
+
+        itemTouchCallback.dragFlags = verticalDragFlags or horizontalDragFlags
     }
 
     /**
@@ -156,7 +172,7 @@ open class LilRecyclerView @JvmOverloads constructor(
     }
 
     enum class DragMode {
-        LONG_PRESS, HANDLE
+        LONG_PRESS, HANDLE, NONE
     }
 
 }
