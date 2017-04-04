@@ -66,6 +66,10 @@ open class LilRecyclerView @JvmOverloads constructor(
                         moveListener?.onItemMoved(current, target)
                     }
                 }
+
+                override fun onItemDropped(current: ViewHolder) {
+                    moveListener?.onItemDropped(current)
+                }
             }
     )
     private val itemTouchHelper = ItemTouchHelper(itemTouchCallback)
@@ -168,6 +172,13 @@ open class LilRecyclerView @JvmOverloads constructor(
          * @param target item that [current] crosses in this moment
          */
         fun onItemMoved(current: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder)
+
+        /**
+         * Notifies client that [current] item was dropped (i.e. drag is finished).
+         *
+         * @param current item which was dragged
+         */
+        fun onItemDropped(current: RecyclerView.ViewHolder)
 
     }
 
