@@ -9,7 +9,6 @@ import android.support.v7.widget.helper.ItemTouchHelper
 import android.support.v7.widget.helper.ItemTouchHelper.*
 import android.util.AttributeSet
 import android.view.MotionEvent
-import android.widget.Toast
 import ru.justd.lilwidgets.recycler.LilRecyclerView.DragMode.*
 
 /**
