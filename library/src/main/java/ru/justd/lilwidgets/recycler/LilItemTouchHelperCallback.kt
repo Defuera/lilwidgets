@@ -35,6 +35,12 @@ internal class LilItemTouchHelperCallback(
         return true
     }
 
+    override fun clearView(recyclerView: RecyclerView, viewHolder: ViewHolder) {
+        listener.onItemDropped(viewHolder)
+
+        super.clearView(recyclerView, viewHolder)
+    }
+
     override fun onSwiped(viewHolder: ViewHolder?, direction: Int) {}
 
     override fun isLongPressDragEnabled(): Boolean = longPressEnabled

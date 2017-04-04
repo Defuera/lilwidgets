@@ -1,10 +1,12 @@
 package ru.justd.demo
 
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import ru.justd.lilwidgets.recycler.LilRecyclerView
 import java.util.*
 
@@ -46,6 +48,10 @@ class TestAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>(), LilRecycler
 
     override fun onItemMoved(current: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder) {
         Collections.swap(items, current.adapterPosition, target.adapterPosition)
+    }
+
+    override fun onItemDropped(current: RecyclerView.ViewHolder) {
+        Log.d("LilWidget", "drop drop drop")
     }
 
     fun itemIsDraggable(holder: RecyclerView.ViewHolder): Boolean = holder.itemViewType == typeRegular

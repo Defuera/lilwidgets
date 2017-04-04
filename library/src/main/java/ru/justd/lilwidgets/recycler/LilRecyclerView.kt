@@ -9,6 +9,7 @@ import android.support.v7.widget.helper.ItemTouchHelper
 import android.support.v7.widget.helper.ItemTouchHelper.*
 import android.util.AttributeSet
 import android.view.MotionEvent
+import android.widget.Toast
 import ru.justd.lilwidgets.recycler.LilRecyclerView.DragMode.*
 
 /**
@@ -65,6 +66,10 @@ open class LilRecyclerView @JvmOverloads constructor(
                         adapter?.notifyItemMoved(current.adapterPosition, target.adapterPosition)
                         moveListener?.onItemMoved(current, target)
                     }
+                }
+
+                override fun onItemDropped(current: ViewHolder) {
+                    moveListener?.onItemDropped(current)
                 }
             }
     )
@@ -168,6 +173,13 @@ open class LilRecyclerView @JvmOverloads constructor(
          * @param target item that [current] crosses in this moment
          */
         fun onItemMoved(current: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder)
+
+        /**
+         * Notifies client that [current] item was dropped (i.e. drag is finished).
+         *
+         * @param current item which was dragged
+         */
+        fun onItemDropped(current: RecyclerView.ViewHolder)
 
     }
 
