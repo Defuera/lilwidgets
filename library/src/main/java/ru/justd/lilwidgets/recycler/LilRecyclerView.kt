@@ -70,6 +70,10 @@ open class LilRecyclerView @JvmOverloads constructor(
                 override fun onItemDropped(current: ViewHolder) {
                     moveListener?.onItemDropped(current)
                 }
+
+                override fun onItemPicked(current: ViewHolder) {
+                    moveListener?.onItemPicked(current)
+                }
             }
     )
     private val itemTouchHelper = ItemTouchHelper(itemTouchCallback)
@@ -164,6 +168,13 @@ open class LilRecyclerView @JvmOverloads constructor(
      * Callback that notifies client about items' movements in list
      */
     interface MoveListener {
+
+        /**
+         * Notifies client that drag started
+         *
+         * @param current currently dragging item
+         */
+        fun onItemPicked(current: RecyclerView.ViewHolder)
 
         /**
          * Notifies client that [current] and [target] items were swapped

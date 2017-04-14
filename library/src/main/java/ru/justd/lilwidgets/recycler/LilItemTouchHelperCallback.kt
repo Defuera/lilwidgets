@@ -35,6 +35,14 @@ internal class LilItemTouchHelperCallback(
         return true
     }
 
+    override fun onSelectedChanged(viewHolder: ViewHolder?, actionState: Int) {
+        super.onSelectedChanged(viewHolder, actionState)
+
+        if (viewHolder != null && actionState == ItemTouchHelper.ACTION_STATE_DRAG) {
+            listener.onItemPicked(viewHolder)
+        }
+    }
+
     override fun clearView(recyclerView: RecyclerView, viewHolder: ViewHolder) {
         listener.onItemDropped(viewHolder)
 

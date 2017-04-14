@@ -1,5 +1,6 @@
 package ru.justd.demo
 
+import android.graphics.Color
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
@@ -52,6 +53,10 @@ class TestAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>(), LilRecycler
 
     override fun onItemDropped(current: RecyclerView.ViewHolder) {
         Log.d("LilWidget", "drop drop drop")
+    }
+
+    override fun onItemPicked(current: RecyclerView.ViewHolder) {
+        current.itemView.setBackgroundColor(Color.WHITE)
     }
 
     fun itemIsDraggable(holder: RecyclerView.ViewHolder): Boolean = holder.itemViewType == typeRegular
