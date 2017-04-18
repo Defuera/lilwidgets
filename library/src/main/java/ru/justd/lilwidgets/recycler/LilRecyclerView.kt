@@ -135,9 +135,9 @@ open class LilRecyclerView @JvmOverloads constructor(
                     && handleViewId != null
                     && e.action == MotionEvent.ACTION_DOWN) {
 
-                val view = findChildViewUnder(e.x, e.y)
-                val handle = view?.findViewById(handleViewId!!)
+                val view = findChildViewUnder(e.x, e.y) ?: return false
 
+                val handle = view.findViewById(handleViewId!!)
                 val handleRect = Rect()
                 handle?.getHitRect(handleRect)
 
