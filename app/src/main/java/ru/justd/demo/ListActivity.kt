@@ -23,6 +23,7 @@ class ListActivity : Activity() {
         list.layoutManager = layoutManager
         list.adapter = testAdapter
         list.moveListener = testAdapter
+        list.allowHorizontalDrag = false
         list.dragPredicate = { testAdapter.itemIsDraggable(it) }
         list.replacePredicate = { _, target -> testAdapter.itemIsDraggable(target) }
 

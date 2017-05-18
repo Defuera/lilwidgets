@@ -42,6 +42,18 @@ open class LilRecyclerView @JvmOverloads constructor(
 
     var moveListener: MoveListener? = null
 
+    var allowVerticalDrag: Boolean? = null
+        set(value) {
+            field = value
+            setupDragFlags()
+        }
+
+    var allowHorizontalDrag: Boolean? = null
+        set(value) {
+            field = value
+            setupDragFlags()
+        }
+
     /**
      * Predicate that determines if [target] item can be replaced with [current] one
      * @param current item which is currently moving
@@ -106,20 +118,26 @@ open class LilRecyclerView @JvmOverloads constructor(
 
     override fun setLayoutManager(lm: LayoutManager) {
         super.setLayoutManager(lm)
-        setupDragFlags(lm)
-    }
 
-    private fun setupDragFlags(lm: LayoutManager) {
-        val allowVerticalDrag = lm.canScrollVertically()
-        val allowHorizontalDrag = lm.canScrollHorizontally()
-        val isMultiColumn = when (lm) {
-            is GridLayoutManager -> lm.spanCount > 1
-            is StaggeredGridLayoutManager -> lm.spanCount > 1
-            else -> false
+        if (allowVerticalDrag == null) {
+            allowVerticalDrag = lm.canScrollVertically()
         }
 
-        val verticalDragFlags = if (allowVerticalDrag) (UP or DOWN) else 0
-        val horizontalDragFlags = if (allowHorizontalDrag or isMultiColumn) (LEFT or RIGHT) else 0
+        if (allowHorizontalDrag == null) {
+            val isMultiColumn = when (lm) {
+                is GridLayoutManager -> lm.spanCount > 1
+                is StaggeredGridLayoutManager -> lm.spanCount > 1
+                else -> false
+            }
+
+            allowHorizontalDrag = lm.canScrollHorizontally() or isMultiColumn
+        }
+
+    }
+
+    private fun setupDragFlags() {
+        val verticalDragFlags = if (allowVerticalDrag ?: false) (UP or DOWN) else 0
+        val horizontalDragFlags = if (allowHorizontalDrag ?: false) (LEFT or RIGHT) else 0
 
         itemTouchCallback.dragFlags = verticalDragFlags or horizontalDragFlags
     }
