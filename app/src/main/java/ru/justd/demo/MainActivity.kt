@@ -15,6 +15,19 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        initDisplayProgressDialog()
+
+        initDisplayProgressDialogDelayed()
+
+        initShowLoaderWidget()
+
+        findViewById(R.id.open_list).setOnClickListener {
+            ListActivity.start(this)
+        }
+
+    }
+
+    private fun initDisplayProgressDialog() {
         findViewById(R.id.show_loader_dialog).setOnClickListener {
             LilLoaderDialog.Builder(supportFragmentManager)
                     .setTitle("Please wait")
@@ -22,7 +35,9 @@ class MainActivity : AppCompatActivity() {
                     .setOnDismissListener({ Toast.makeText(this, "Dialog dismissed", Toast.LENGTH_SHORT).show() })
                     .create()
         }
+    }
 
+    private fun initDisplayProgressDialogDelayed() {
         findViewById(R.id.show_loader_dialog_delayed).setOnClickListener {
             LilLoaderDialog.Builder(supportFragmentManager)
                     .setTitle("Please wait delayed")
@@ -30,11 +45,9 @@ class MainActivity : AppCompatActivity() {
                     .setDelay(1000)
                     .create()
         }
+    }
 
-        findViewById(R.id.open_list).setOnClickListener {
-            ListActivity.start(this)
-        }
-
+    private fun initShowLoaderWidget() {
         findViewById(R.id.show_loader_widget).setOnClickListener {
 
             val loader = findViewById(R.id.loader) as LilLoaderWidget
@@ -57,7 +70,7 @@ class MainActivity : AppCompatActivity() {
             loader.setOnErrorClicked(
                     {
                         error ->
-                        if (error != null){
+                        if (error != null) {
                             Toast.makeText(this, error.javaClass.simpleName, Toast.LENGTH_SHORT).show()
                         } else {
                             Toast.makeText(this, "loader clicked", Toast.LENGTH_SHORT).show()

@@ -42,6 +42,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/padding_normal"
         android:layout_marginStart="@dimen/padding_normal"
+        android:gravity="center_vertical"
         android:text="?attr/lilDefaultMessage"
         android:layout_alignBottom="@+id/progress_bar"
         android:layout_toRightOf="@+id/progress_bar"
