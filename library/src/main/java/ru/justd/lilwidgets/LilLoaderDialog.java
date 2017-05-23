@@ -193,20 +193,19 @@ public class LilLoaderDialog extends DialogFragment {
         /**
          * build and show
          */
-        public final void create() {
+        public final LilLoaderDialog create() {
             //only one dialog can exist at a time
             dismiss(fragmentManager);
+
+            final LilLoaderDialog fragment = new LilLoaderDialog();
 
             handler.postDelayed(
                     new Runnable() {
                         @Override
                         public void run() {
-                            LilLoaderDialog fragment = getTopProgressDialogFragment(fragmentManager);
-                            if (fragment != null) {
+                            if (getTopProgressDialogFragment(fragmentManager) != null) {
                                 throw new IllegalStateException("Dialog is already shown");
                             }
-
-                            fragment = new LilLoaderDialog();
 
                             Bundle bundle = new Bundle();
                             bundle.putString(EXTRA_TITLE, title);
@@ -223,6 +222,8 @@ public class LilLoaderDialog extends DialogFragment {
                         }
                     },
                     delayMillis);
+
+            return fragment;
         }
     }
 }
