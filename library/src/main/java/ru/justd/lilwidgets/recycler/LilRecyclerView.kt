@@ -74,6 +74,12 @@ open class LilRecyclerView @JvmOverloads constructor(
             itemTouchCallback.dragPredicate = value
         }
 
+    var activeItemElevation: Float? = null
+        set(value) {
+            field = value
+            itemTouchCallback.activeItemElevation = value
+        }
+
     private val itemTouchCallback = LilItemTouchHelperCallback(
             object : MoveListener {
                 override fun onItemMoved(current: ViewHolder, target: ViewHolder) {
@@ -90,6 +96,7 @@ open class LilRecyclerView @JvmOverloads constructor(
                 }
             }
     )
+
     private val itemTouchHelper = ItemTouchHelper(itemTouchCallback)
 
     private var handleViewId: Int? = null

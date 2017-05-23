@@ -26,6 +26,7 @@ class ListActivity : Activity() {
         list.moveListener = testAdapter
         list.allowHorizontalDrag = false
         list.dragPredicate = { testAdapter.itemIsDraggable(it) }
+        list.activeItemElevation = 20f
         list.replacePredicate = { _, target -> testAdapter.itemIsDraggable(target) }
 
         list.setDragModeHandle(R.id.handle)

@@ -1,5 +1,8 @@
 package ru.justd.lilwidgets.recycler
 
+import android.graphics.Canvas
+import android.support.v4.view.ViewCompat
+import android.support.v7.recyclerview.R
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.ViewHolder
 import android.support.v7.widget.helper.ItemTouchHelper
@@ -16,6 +19,7 @@ internal class LilItemTouchHelperCallback(
     internal var dragPredicate: ((ViewHolder) -> Boolean)? = null
     internal var replacePredicate: ((current: ViewHolder?, target: ViewHolder?) -> Boolean)? = null
     internal var dragFlags: Int = 0
+    internal var activeItemElevation : Float? = null
 
     private var lastTargetPosition: Int = -1
 
@@ -51,6 +55,21 @@ internal class LilItemTouchHelperCallback(
         listener.onItemDropped(viewHolder)
 
         super.clearView(recyclerView, viewHolder)
+    }
+
+    override fun onChildDraw(c: Canvas?, recyclerView: RecyclerView?, viewHolder: ViewHolder?, dX: Float, dY: Float, actionState: Int, isCurrentlyActive: Boolean) {
+        if (isCurrentlyActive) {
+            val view = viewHolder?.itemView ?: return
+            var originalElevation: Any? = view.getTag(R.id.item_touch_helper_previous_elevation)
+            if (originalElevation == null) {
+                originalElevation = ViewCompat.getElevation(view)
+                val newElevation = activeItemElevation ?: 1f
+                ViewCompat.setElevation(view, newElevation)
+                view.setTag(R.id.item_touch_helper_previous_elevation, originalElevation)
+            }
+        }
+
+        super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
     }
 
     override fun onSwiped(viewHolder: ViewHolder?, direction: Int) {}
