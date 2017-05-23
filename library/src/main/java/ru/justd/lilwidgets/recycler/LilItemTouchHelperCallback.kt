@@ -14,6 +14,7 @@ internal class LilItemTouchHelperCallback(
 
     internal var longPressEnabled: Boolean = false
     internal var dragPredicate: ((ViewHolder) -> Boolean)? = null
+    internal var replacePredicate: ((current: ViewHolder?, target: ViewHolder?) -> Boolean)? = null
     internal var dragFlags: Int = 0
 
     private var lastTargetPosition: Int = -1
@@ -24,6 +25,9 @@ internal class LilItemTouchHelperCallback(
                 0
         )
     }
+
+    override fun canDropOver(recyclerView: RecyclerView?, current: ViewHolder?, target: ViewHolder?): Boolean =
+        replacePredicate?.invoke(current, target) ?: super.canDropOver(recyclerView, current, target)
 
     override fun onMove(recyclerView: RecyclerView, viewHolder: ViewHolder, target: ViewHolder): Boolean {
         val targetPosition = target.adapterPosition

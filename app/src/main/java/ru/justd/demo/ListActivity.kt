@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.GridLayoutManager
+import android.support.v7.widget.LinearLayoutManager
 import ru.justd.lilwidgets.recycler.LilRecyclerView
 
 /**
@@ -18,7 +19,7 @@ class ListActivity : Activity() {
 
         val list = findViewById(R.id.list) as LilRecyclerView
         val testAdapter = TestAdapter()
-        val layoutManager = GridLayoutManager(this, 2)
+        val layoutManager = LinearLayoutManager(this)
 
         list.layoutManager = layoutManager
         list.adapter = testAdapter
