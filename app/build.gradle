@@ -35,6 +35,11 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
     compile project(':library')
+
+    //Testing
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.mockito:mockito-core:2.7.22'
+    testCompile 'org.robolectric:robolectric:3.3.2'
 }
 repositories {
     mavenCentral()
