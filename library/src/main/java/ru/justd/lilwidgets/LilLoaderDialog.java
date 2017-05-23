@@ -68,8 +68,10 @@ public class LilLoaderDialog extends DialogFragment {
     @Override
     public void onStart() {
         super.onStart();
+        initUi();
+    }
 
-        Dialog dialog = getDialog();
+    protected void initUi() {Dialog dialog = getDialog();
         if (dialog != null) {
             dialog.setOnDismissListener(dismissListener);
             dialog.setOnCancelListener(cancelListener);
@@ -120,7 +122,7 @@ public class LilLoaderDialog extends DialogFragment {
         }
     }
 
-    private static LilLoaderDialog getTopProgressDialogFragment(FragmentManager fragmentManager) {
+    protected static LilLoaderDialog getTopProgressDialogFragment(FragmentManager fragmentManager) {
         //noinspection RestrictedApi
         List<Fragment> fragments = fragmentManager.getFragments();
         int size = fragments == null ? 0 : fragments.size();
