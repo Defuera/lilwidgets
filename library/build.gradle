@@ -31,8 +31,6 @@ dependencies {
 
     compile "com.android.support:appcompat-v7:$supportVersion"
     compile "com.android.support:recyclerview-v7:$supportVersion"
-
-    testCompile 'junit:junit:4.12'
 }
 repositories {
     mavenCentral()

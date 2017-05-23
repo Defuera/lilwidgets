@@ -3,6 +3,7 @@ package ru.justd.demo
 import android.os.Bundle
 import android.os.Handler
 import android.support.v7.app.AppCompatActivity
+import android.widget.TextView
 import android.widget.Toast
 import ru.justd.lilwidgets.LilLoaderDialog
 import ru.justd.lilwidgets.LilLoaderWidget
@@ -21,6 +22,8 @@ class MainActivity : AppCompatActivity() {
 
         initShowLoaderWidget()
 
+        initDisplayProgressDialogWithCustomWidget()
+
         findViewById(R.id.open_list).setOnClickListener {
             ListActivity.start(this)
         }
@@ -28,7 +31,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initDisplayProgressDialog() {
-        findViewById(R.id.show_loader_dialog).setOnClickListener {
+        findViewById(R.id.show_cancelable_loader_dialog).setOnClickListener {
             LilLoaderDialog.Builder(supportFragmentManager)
                     .setTitle("Please wait")
                     .setCancelable(true)
@@ -78,6 +81,20 @@ class MainActivity : AppCompatActivity() {
                     }
             )
 
+        }
+    }
+
+    private fun initDisplayProgressDialogWithCustomWidget() {
+        findViewById(R.id.show_loader_dialog_custom_view).setOnClickListener {
+
+            val textView = TextView(this)
+            textView.text = "Once upon a time"
+
+            LilLoaderDialog.Builder(supportFragmentManager)
+                    .setTitle("Custom widget dialog")
+                    .setView(textView)
+                    .setCancelable(true)
+                    .create()
         }
     }
 

@@ -1,40 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical"
     android:padding="20dp">
 
-    <Button
-        android:id="@+id/show_loader_dialog"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Display progress dialog" />
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="20dp">
 
-    <Button
-        android:id="@+id/show_loader_dialog_delayed"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="With delay" />
+        <Button
+            android:id="@+id/show_cancelable_loader_dialog"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Display progress dialog"/>
 
-    <Button
-        android:id="@+id/show_loader_widget"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Show loader widget" />
+        <Button
+            android:id="@+id/show_loader_dialog_delayed"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="With delay"/>
 
-    <Button
-        android:id="@+id/open_list"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Open drag'n'drop list demo" />
+        <Button
+            android:id="@+id/show_loader_widget"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Show loader widget"/>
+
+        <Button
+            android:id="@+id/show_loader_dialog_custom_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Show loader dialog with custom view"/>
+
+        <ru.justd.lilwidgets.LilLoaderWidget
+            android:id="@+id/loader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="16dp"
+            android:text="Full screen tests"
+            android:textColor="@color/black"
+            android:textSize="17sp"
+            android:textStyle="bold"/>
+
+        <Button
+            android:id="@+id/open_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Open drag'n'drop list demo"/>
 
 
-    <ru.justd.lilwidgets.LilLoaderWidget
-        android:id="@+id/loader"
-        android:visibility="gone"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+    </LinearLayout>
 
-</LinearLayout>
+</ScrollView>

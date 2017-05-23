@@ -15,6 +15,8 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 /**
@@ -46,6 +48,12 @@ public class LilLoaderDialog extends DialogFragment {
     private TextView message;
     private DialogInterface.OnDismissListener dismissListener;
     private DialogInterface.OnCancelListener cancelListener;
+    private View widget;
+    private ViewGroup bodyContainer;
+
+    private void setCustomWidget(View widget) {
+        this.widget = widget;
+    }
 
     private void setOnDismissListener(DialogInterface.OnDismissListener dismissListener) {
         this.dismissListener = dismissListener;
@@ -62,6 +70,7 @@ public class LilLoaderDialog extends DialogFragment {
         progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
         title = (TextView) view.findViewById(R.id.title);
         message = (TextView) view.findViewById(R.id.message);
+        bodyContainer = (ViewGroup) view.findViewById(R.id.container_body);
         return view;
     }
 
@@ -101,6 +110,19 @@ public class LilLoaderDialog extends DialogFragment {
                     } else {
                         message.setVisibility(View.VISIBLE);
                     }
+                }
+            }
+
+            if (widget != null) {
+                boolean containsCustomWidget = false;
+                for (int i = 0; i < bodyContainer.getChildCount(); i++) {
+                    bodyContainer.setVisibility(View.GONE);
+                    if (bodyContainer.getChildAt(i) == widget) {
+                        containsCustomWidget = true;
+                    }
+                }
+                if (!containsCustomWidget) {
+                    bodyContainer.addView(widget);
                 }
             }
         }
@@ -149,6 +171,7 @@ public class LilLoaderDialog extends DialogFragment {
         private long delayMillis = 0;
         private DialogInterface.OnDismissListener dismissListener;
         private DialogInterface.OnCancelListener cancelListener;
+        private View widget;
 
         public Builder(FragmentManager fragmentManager) {
             this.fragmentManager = fragmentManager;
@@ -190,6 +213,12 @@ public class LilLoaderDialog extends DialogFragment {
             return this;
         }
 
+        @NotNull
+        public Builder setView(@NotNull View widget) {
+            this.widget = widget;
+            return this;
+        }
+
         /**
          * build and show
          */
@@ -216,6 +245,7 @@ public class LilLoaderDialog extends DialogFragment {
                             fragment.setArguments(bundle);
 
                             fragment.setStyle(STYLE_NORMAL, R.style.LilStyle);
+                            fragment.setCustomWidget(widget);
 
                             fragment.show(fragmentManager, LilLoaderDialog.class.getSimpleName());
                             fragment.setOnDismissListener(dismissListener);
@@ -225,4 +255,5 @@ public class LilLoaderDialog extends DialogFragment {
                     delayMillis);
         }
     }
+
 }
