@@ -66,6 +66,18 @@ open class LilRecyclerView @JvmOverloads constructor(
         }
 
     /**
+     * If your list has items which restrict drag, this predicate is exactly what you are looking for.
+     * It must return [true] if [target] cannot be crossed.
+     * @param current item which is currently moving
+     * @param target item which is crossed by [current]
+     */
+    var borderPredicate: ((current: ViewHolder?, target: ViewHolder?) -> Boolean)? = null
+        set(value) {
+            field = value
+            itemTouchCallback.borderPredicate = value
+        }
+
+    /**
      * Predicate that determines if given item can be moved
      */
     var dragPredicate: ((ViewHolder) -> Boolean)? = null
