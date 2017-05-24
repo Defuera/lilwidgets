@@ -22,7 +22,7 @@ internal class LilItemTouchHelperCallback(
     internal var dragFlags: Int = 0
     internal var activeItemElevation : Float? = null
 
-    private var lastTargetPosition: Int = -1
+    private var lastTargetPosition: Int = RecyclerView.NO_POSITION
 
     override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: ViewHolder): Int {
         return makeMovementFlags(
@@ -55,6 +55,7 @@ internal class LilItemTouchHelperCallback(
 
     override fun clearView(recyclerView: RecyclerView, viewHolder: ViewHolder) {
         listener.onItemDropped(viewHolder)
+        lastTargetPosition = RecyclerView.NO_POSITION
 
         super.clearView(recyclerView, viewHolder)
     }
