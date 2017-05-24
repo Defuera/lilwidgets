@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import ru.justd.lilwidgets.recycler.LilRecyclerView
 import java.util.*
 
@@ -48,6 +47,7 @@ class TestAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>(), LilRecycler
             }
 
     override fun onItemMoved(current: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder) {
+        Log.d("LilWidget", "move move move")
         Collections.swap(items, current.adapterPosition, target.adapterPosition)
     }
 
@@ -59,7 +59,7 @@ class TestAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>(), LilRecycler
         current.itemView.setBackgroundColor(Color.WHITE)
     }
 
-    fun itemIsDraggable(holder: RecyclerView.ViewHolder): Boolean = holder.itemViewType == typeRegular
+    fun itemIsDraggable(holder: RecyclerView.ViewHolder?): Boolean = holder?.itemViewType == typeRegular
 
     inner class RegularViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
 

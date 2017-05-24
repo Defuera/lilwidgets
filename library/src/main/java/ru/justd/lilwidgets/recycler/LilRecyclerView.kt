@@ -59,7 +59,23 @@ open class LilRecyclerView @JvmOverloads constructor(
      * @param current item which is currently moving
      * @param target item which is crossed by [current] now and which potentially can be replaced
      */
-    var replacePredicate: ((current: ViewHolder, target: ViewHolder) -> Boolean)? = null
+    var replacePredicate: ((current: ViewHolder?, target: ViewHolder?) -> Boolean)? = null
+        set(value) {
+            field = value
+            itemTouchCallback.replacePredicate = value
+        }
+
+    /**
+     * If your list has items which restrict drag, this predicate is exactly what you are looking for.
+     * It must return [true] if [target] cannot be crossed.
+     * @param current item which is currently moving
+     * @param target item which is crossed by [current]
+     */
+    var borderPredicate: ((current: ViewHolder?, target: ViewHolder?) -> Boolean)? = null
+        set(value) {
+            field = value
+            itemTouchCallback.borderPredicate = value
+        }
 
     /**
      * Predicate that determines if given item can be moved
@@ -70,13 +86,17 @@ open class LilRecyclerView @JvmOverloads constructor(
             itemTouchCallback.dragPredicate = value
         }
 
+    var activeItemElevation: Float? = null
+        set(value) {
+            field = value
+            itemTouchCallback.activeItemElevation = value
+        }
+
     private val itemTouchCallback = LilItemTouchHelperCallback(
             object : MoveListener {
                 override fun onItemMoved(current: ViewHolder, target: ViewHolder) {
-                    if (replacePredicate?.invoke(current, target) ?: true) {
-                        adapter?.notifyItemMoved(current.adapterPosition, target.adapterPosition)
-                        moveListener?.onItemMoved(current, target)
-                    }
+                    adapter?.notifyItemMoved(current.adapterPosition, target.adapterPosition)
+                    moveListener?.onItemMoved(current, target)
                 }
 
                 override fun onItemDropped(current: ViewHolder) {
@@ -88,6 +108,7 @@ open class LilRecyclerView @JvmOverloads constructor(
                 }
             }
     )
+
     private val itemTouchHelper = ItemTouchHelper(itemTouchCallback)
 
     private var handleViewId: Int? = null

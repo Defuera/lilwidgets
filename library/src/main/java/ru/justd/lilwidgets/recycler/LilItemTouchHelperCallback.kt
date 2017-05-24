@@ -1,5 +1,8 @@
 package ru.justd.lilwidgets.recycler
 
+import android.graphics.Canvas
+import android.support.v4.view.ViewCompat
+import android.support.v7.recyclerview.R
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.ViewHolder
 import android.support.v7.widget.helper.ItemTouchHelper
@@ -14,7 +17,10 @@ internal class LilItemTouchHelperCallback(
 
     internal var longPressEnabled: Boolean = false
     internal var dragPredicate: ((ViewHolder) -> Boolean)? = null
+    internal var replacePredicate: ((current: ViewHolder?, target: ViewHolder?) -> Boolean)? = null
+    internal var borderPredicate: ((current: ViewHolder?, target: ViewHolder?) -> Boolean)? = null
     internal var dragFlags: Int = 0
+    internal var activeItemElevation : Float? = null
 
     private var lastTargetPosition: Int = -1
 
@@ -25,7 +31,11 @@ internal class LilItemTouchHelperCallback(
         )
     }
 
+    override fun canDropOver(recyclerView: RecyclerView?, current: ViewHolder?, target: ViewHolder?): Boolean =
+            replacePredicate?.invoke(current, target) ?: super.canDropOver(recyclerView, current, target)
+
     override fun onMove(recyclerView: RecyclerView, viewHolder: ViewHolder, target: ViewHolder): Boolean {
+
         val targetPosition = target.adapterPosition
         if (targetPosition != lastTargetPosition) {
             lastTargetPosition = targetPosition
@@ -47,6 +57,36 @@ internal class LilItemTouchHelperCallback(
         listener.onItemDropped(viewHolder)
 
         super.clearView(recyclerView, viewHolder)
+    }
+
+
+
+    override fun onChildDraw(c: Canvas?, recyclerView: RecyclerView, viewHolder: ViewHolder?, dX: Float, dY: Float, actionState: Int, isCurrentlyActive: Boolean) {
+
+        if (isCurrentlyActive) {
+            val view = viewHolder?.itemView ?: return
+
+            // set active item's elevation
+            var originalElevation: Any? = view.getTag(R.id.item_touch_helper_previous_elevation)
+            if (originalElevation == null) {
+                originalElevation = ViewCompat.getElevation(view)
+                val newElevation = activeItemElevation ?: 1f
+                ViewCompat.setElevation(view, newElevation)
+                view.setTag(R.id.item_touch_helper_previous_elevation, originalElevation)
+            }
+
+            // check if view can be dragged over next item
+            val targetView = recyclerView.findChildViewUnder(view.x, view.y + Math.signum(dY) * getMoveThreshold(viewHolder))
+            if (targetView != null) {
+                val target = recyclerView.findContainingViewHolder(targetView)
+
+                if (borderPredicate?.invoke(viewHolder, target) ?: false) {
+                    return
+                }
+            }
+        }
+
+        super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
     }
 
     override fun onSwiped(viewHolder: ViewHolder?, direction: Int) {}
