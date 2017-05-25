@@ -191,7 +191,7 @@ open class LilRecyclerView @JvmOverloads constructor(
 
                     val borderIsReached = borderPredicate?.invoke(viewHolder, target) ?: false
                     if (itemTouchCallback.borderIsReached) {
-                        e.setLocation(e.x, lastY ?: e.y)
+                        e.setLocation(e.x, targetView.bottom.toFloat())
                     } else {
                         lastY = e.y
                     }
