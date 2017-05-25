@@ -9,6 +9,7 @@ import android.support.v7.widget.helper.ItemTouchHelper
 import android.support.v7.widget.helper.ItemTouchHelper.*
 import android.util.AttributeSet
 import android.view.MotionEvent
+import android.view.MotionEvent.*
 import ru.justd.lilwidgets.recycler.LilRecyclerView.DragMode.*
 
 /**
@@ -72,10 +73,6 @@ open class LilRecyclerView @JvmOverloads constructor(
      * @param target item which is crossed by [current]
      */
     var borderPredicate: ((current: ViewHolder?, target: ViewHolder?) -> Boolean)? = null
-        set(value) {
-            field = value
-            itemTouchCallback.borderPredicate = value
-        }
 
     /**
      * Predicate that determines if given item can be moved
@@ -163,6 +160,47 @@ open class LilRecyclerView @JvmOverloads constructor(
         itemTouchCallback.dragFlags = verticalDragFlags or horizontalDragFlags
     }
 
+    private var lastY: Float? = null
+
+    override fun onTouchEvent(e: MotionEvent?): Boolean {
+        if (e != null) {
+            when (e.action) {
+                ACTION_DOWN -> lastY = e.y
+                ACTION_MOVE -> handleBorderCase(e)
+                ACTION_UP -> lastY = null
+            }
+        }
+
+        return super.onTouchEvent(e)
+    }
+
+    private fun handleBorderCase(e: MotionEvent) {
+        val view = itemTouchCallback.selectedItem?.itemView
+        if (view != null) {
+            val viewHolder = itemTouchCallback.selectedItem
+
+            if (viewHolder != null) {
+                val dY = e.y - (lastY ?: 0f)
+                val targetView = findChildViewUnder(
+                        view.x,
+                        view.y + Math.signum(dY) * itemTouchCallback.getMoveThreshold(viewHolder)
+                )
+
+                if (targetView != null) {
+                    val target = findContainingViewHolder(targetView)
+
+                    val borderIsReached = borderPredicate?.invoke(viewHolder, target) ?: false
+                    if (itemTouchCallback.borderIsReached) {
+                        e.setLocation(e.x, lastY ?: e.y)
+                    } else {
+                        lastY = e.y
+                    }
+                    itemTouchCallback.borderIsReached = borderIsReached
+                }
+            }
+        }
+    }
+
     /**
      * The purpose of this listener is to start drag if [HANDLE] mode is active and user
      * touches handle view
@@ -172,7 +210,7 @@ open class LilRecyclerView @JvmOverloads constructor(
         override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
             if (dragMode == HANDLE
                     && handleViewId != null
-                    && e.action == MotionEvent.ACTION_DOWN) {
+                    && e.action == ACTION_DOWN) {
 
                 val view = findChildViewUnder(e.x, e.y) ?: return false
 

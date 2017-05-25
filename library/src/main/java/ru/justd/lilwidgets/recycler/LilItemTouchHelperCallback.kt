@@ -18,9 +18,10 @@ internal class LilItemTouchHelperCallback(
     internal var longPressEnabled: Boolean = false
     internal var dragPredicate: ((ViewHolder) -> Boolean)? = null
     internal var replacePredicate: ((current: ViewHolder?, target: ViewHolder?) -> Boolean)? = null
-    internal var borderPredicate: ((current: ViewHolder?, target: ViewHolder?) -> Boolean)? = null
     internal var dragFlags: Int = 0
     internal var activeItemElevation : Float? = null
+    internal var selectedItem: ViewHolder? = null
+    internal var borderIsReached = false
 
     private var lastTargetPosition: Int = RecyclerView.NO_POSITION
 
@@ -49,13 +50,16 @@ internal class LilItemTouchHelperCallback(
         super.onSelectedChanged(viewHolder, actionState)
 
         if (viewHolder != null && actionState == ItemTouchHelper.ACTION_STATE_DRAG) {
+            selectedItem = viewHolder
             listener.onItemPicked(viewHolder)
         }
     }
 
     override fun clearView(recyclerView: RecyclerView, viewHolder: ViewHolder) {
         listener.onItemDropped(viewHolder)
+
         lastTargetPosition = RecyclerView.NO_POSITION
+        selectedItem = null
 
         super.clearView(recyclerView, viewHolder)
     }
@@ -76,15 +80,10 @@ internal class LilItemTouchHelperCallback(
                 view.setTag(R.id.item_touch_helper_previous_elevation, originalElevation)
             }
 
-            // check if view can be dragged over next item
-            val targetView = recyclerView.findChildViewUnder(view.x, view.y + Math.signum(dY) * getMoveThreshold(viewHolder))
-            if (targetView != null) {
-                val target = recyclerView.findContainingViewHolder(targetView)
-
-                if (borderPredicate?.invoke(viewHolder, target) ?: false) {
-                    return
-                }
+            if (borderIsReached) {
+                return
             }
+
         }
 
         super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
