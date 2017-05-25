@@ -181,10 +181,11 @@ open class LilRecyclerView @JvmOverloads constructor(
 
             if (viewHolder != null) {
                 val dY = e.y - (lastY ?: 0f)
-                val targetView = findChildViewUnder(
-                        view.x,
-                        view.y + Math.signum(dY) * itemTouchCallback.getMoveThreshold(viewHolder)
-                )
+                val actualY = view.y +
+                        (if (dY > 0) view.height else 0) +
+                        Math.signum(dY) * itemTouchCallback.getMoveThreshold(viewHolder)
+
+                val targetView = findChildViewUnder(view.x, actualY)
 
                 if (targetView != null) {
                     val target = findContainingViewHolder(targetView)
