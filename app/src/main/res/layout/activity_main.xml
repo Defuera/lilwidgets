@@ -30,11 +30,16 @@
         android:layout_height="wrap_content"
         android:text="Open drag'n'drop list demo" />
 
-
     <ru.justd.lilwidgets.LilLoaderWidget
         android:id="@+id/loader"
         android:visibility="gone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
+
+    <Button
+        android:id="@+id/open_seek_bar_demo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Seek bar demo"/>
 
 </LinearLayout>

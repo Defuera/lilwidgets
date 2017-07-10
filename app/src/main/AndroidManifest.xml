@@ -20,6 +20,8 @@
 
         <activity android:name=".ListActivity"/>
 
+        <activity android:name=".SeekBarActivity"/>
+
     </application>
 
 </manifest>

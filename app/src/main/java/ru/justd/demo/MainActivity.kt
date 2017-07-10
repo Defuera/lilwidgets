@@ -25,6 +25,10 @@ class MainActivity : AppCompatActivity() {
             ListActivity.start(this)
         }
 
+        findViewById(R.id.open_seek_bar_demo).setOnClickListener {
+            SeekBarActivity.start(this)
+        }
+
     }
 
     private fun initDisplayProgressDialog() {

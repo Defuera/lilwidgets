@@ -14,4 +14,11 @@
         <attr name="lilLoaderDialogProgressColor" format="color" />
     </declare-styleable>
 
+    <declare-styleable name="LilSeekBar">
+        <attr name="lilOrientation" format="enum">
+            <enum name="horizontal" value="0"/>
+            <enum name="vertical" value="1"/>
+        </attr>
+    </declare-styleable>
+
 </resources>
