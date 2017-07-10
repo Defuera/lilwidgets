@@ -1,7 +1,6 @@
 package ru.justd.lilwidgets
 
 import android.content.Context
-import android.content.res.TypedArray
 import android.graphics.Canvas
 import android.util.AttributeSet
 import android.view.MotionEvent
@@ -17,12 +16,21 @@ class LilSeekBar @JvmOverloads constructor(
 ) : SeekBar(context, attrs, defStyleAttr) {
 
     private var orientation: Orientation = Orientation.HORIZONTAL
+    private var listener: OnSeekBarChangeListener? = null
 
     init {
         attrs?.let {
             val attributes = context.obtainStyledAttributes(it, R.styleable.LilSeekBar)
             orientation = styleAttrToOrientation(attributes.getInt(R.styleable.LilSeekBar_lilOrientation, 0))
             attributes.recycle()
+        }
+    }
+
+    override fun setOnSeekBarChangeListener(l: OnSeekBarChangeListener?) {
+        if (isRegularOrientation()) {
+            super.setOnSeekBarChangeListener(l)
+        } else {
+            this.listener = l
         }
     }
 
@@ -65,6 +73,8 @@ class LilSeekBar @JvmOverloads constructor(
                 isSelected = true
                 isPressed = true
 
+                listener?.onStartTrackingTouch(this)
+
                 true
             }
 
@@ -81,12 +91,16 @@ class LilSeekBar @JvmOverloads constructor(
                             }
                         }
 
+                listener?.onProgressChanged(this, progress, true)
+
                 true
             }
 
             MotionEvent.ACTION_UP -> {
                 isSelected = false
                 isPressed = false
+
+                listener?.onStopTrackingTouch(this)
 
                 true
             }

@@ -19,6 +19,7 @@
         android:orientation="horizontal">
 
         <ru.justd.lilwidgets.LilSeekBar
+            android:id="@+id/seek_bar"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             app:lilOrientation="vertical"/>
