@@ -17,7 +17,7 @@ class SeekBarActivity: Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_seek_bar)
 
-        val seekBar = findViewById(R.id.seek_bar) as LilSeekBar
+        val seekBar = findViewById(R.id.seek_bar) as SeekBar
         seekBar.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener {
 
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {

@@ -2,6 +2,7 @@ package ru.justd.lilwidgets
 
 import android.content.Context
 import android.graphics.Canvas
+import android.os.Build
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.widget.SeekBar
@@ -19,11 +20,23 @@ class LilSeekBar @JvmOverloads constructor(
     private var listener: OnSeekBarChangeListener? = null
 
     init {
+
         attrs?.let {
+
             val attributes = context.obtainStyledAttributes(it, R.styleable.LilSeekBar)
             orientation = styleAttrToOrientation(attributes.getInt(R.styleable.LilSeekBar_lilOrientation, 0))
             attributes.recycle()
+
         }
+
+        // Default ripple background moves horizontally with thumb and acts like asshole.
+        // Maybe it's possible to alter it's behaviour in AbsSeekBar#setThumbPos method.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            background = null
+        } else {
+            setBackgroundDrawable(null)
+        }
+
     }
 
     override fun setOnSeekBarChangeListener(l: OnSeekBarChangeListener?) {
@@ -64,58 +77,68 @@ class LilSeekBar @JvmOverloads constructor(
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean =
-    if (isRegularOrientation()) {
-        super.onTouchEvent(event)
-    } else {
-        when (event.action) {
+            if (isRegularOrientation()) {
 
-            MotionEvent.ACTION_DOWN -> {
-                isSelected = true
-                isPressed = true
+                super.onTouchEvent(event)
 
-                listener?.onStartTrackingTouch(this)
+            } else {
 
-                true
-            }
+                if (!isEnabled) {
 
-            MotionEvent.ACTION_MOVE -> {
-                isSelected = true
-                isPressed = true
+                    false
 
-                progress = (max - (max * event.y / height).toInt())
-                        .let {
-                            when {
-                                it < 0 -> 0
-                                it > max -> max
-                                else -> it
-                            }
+                } else {
+
+                    when (event.action) {
+
+                        MotionEvent.ACTION_DOWN -> {
+                            isSelected = true
+                            isPressed = true
+
+                            listener?.onStartTrackingTouch(this)
+
+                            true
                         }
 
-                listener?.onProgressChanged(this, progress, true)
+                        MotionEvent.ACTION_MOVE -> {
+                            isSelected = true
+                            isPressed = true
 
-                true
+                            progress = (max - (max * event.y / height).toInt())
+                                    .let {
+                                        when {
+                                            it < 0 -> 0
+                                            it > max -> max
+                                            else -> it
+                                        }
+                                    }
+
+                            listener?.onProgressChanged(this, progress, true)
+
+                            true
+                        }
+
+                        MotionEvent.ACTION_UP -> {
+                            isSelected = false
+                            isPressed = false
+
+                            listener?.onStopTrackingTouch(this)
+
+                            true
+                        }
+
+                        MotionEvent.ACTION_CANCEL -> {
+                            isSelected = false
+                            isPressed = false
+
+                            false
+                        }
+
+                        else -> false
+
+                    }
+                }
             }
-
-            MotionEvent.ACTION_UP -> {
-                isSelected = false
-                isPressed = false
-
-                listener?.onStopTrackingTouch(this)
-
-                true
-            }
-
-            MotionEvent.ACTION_CANCEL -> {
-                isSelected = false
-                isPressed = false
-
-                false
-            }
-
-            else -> false
-
-        }
-    }
 
     override fun setProgress(progress: Int) {
         synchronized(this) {
