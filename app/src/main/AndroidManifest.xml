@@ -22,6 +22,8 @@
 
         <activity android:name=".SeekBarActivity"/>
 
+        <activity android:name=".SnapActivity"/>
+
     </application>
 
 </manifest>

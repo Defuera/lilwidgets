@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity() {
         initShowLoaderWidget()
 
         findViewById(R.id.open_list).setOnClickListener {
-            ListActivity.start(this)
+            SnapActivity.start(this)
         }
 
         findViewById(R.id.open_seek_bar_demo).setOnClickListener {
