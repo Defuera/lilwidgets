@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.PointF
+import android.graphics.Rect
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
@@ -35,12 +36,12 @@ class SnapActivity : Activity() {
         setContentView(R.layout.activity_list)
 
         val list = findViewById(R.id.list) as RecyclerView
-        list.layoutManager = TestLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        list.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         list.adapter = SnapAdapter()
         SnapSnapHelper(Gravity.START).attachToRecyclerView(list)
 
         val anotherList = findViewById(R.id.mp_list) as RecyclerView
-        anotherList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        anotherList.layoutManager = TestLayoutManager(this)
         anotherList.adapter = MPSnapAdapter()
         SnapSnapHelper(Gravity.START).attachToRecyclerView(anotherList)
 
@@ -107,11 +108,126 @@ class SlowRecyclerView @JvmOverloads constructor(
         defStyleAttrs: Int = 0
 ) : RecyclerView(context, attrs, defStyleAttrs)
 
-class TestLayoutManager @JvmOverloads constructor(
-        val context: Context,
-        orientation: Int = LinearLayoutManager.VERTICAL,
-        reverse: Boolean = false
-) : LinearLayoutManager(context, orientation, reverse)
+class TestLayoutManager constructor(context: Context) : LinearLayoutManager(context) {
+
+    override fun onLayoutChildren(recycler: RecyclerView.Recycler, state: RecyclerView.State) {
+        detachAndScrapAttachedViews(recycler)
+        fillDown(recycler)
+    }
+
+    override fun canScrollHorizontally(): Boolean = true
+
+    override fun canScrollVertically(): Boolean = false
+
+    override fun scrollHorizontallyBy(dx: Int, recycler: RecyclerView.Recycler, state: RecyclerView.State): Int {
+        val delta = scrollHorizontallyInternal(dx)
+        offsetChildrenHorizontal(-delta)
+        return delta
+    }
+
+    private fun scrollHorizontallyInternal(dx: Int): Int {
+        val childCount = childCount
+        val itemCount = itemCount
+
+        if (childCount == 0) {
+            return 0
+        }
+
+        val startView = getChildAt(0)
+        val endView = getChildAt(childCount - 1)
+
+        val viewSpan = getDecoratedRight(endView) - getDecoratedLeft(startView)
+        if (viewSpan < height) {
+            return 0
+        }
+
+        val delta = when {
+            dx < 0 -> {
+                val firstView = getChildAt(0)
+                val firstViewAdapterPos = getPosition(firstView)
+                if (firstViewAdapterPos > 0) {
+                    dx
+                } else {
+                    val viewStart = getDecoratedLeft(firstView)
+                    Math.max(viewStart, dx)
+                }
+            }
+            dx > 0 -> {
+                val lastView = getChildAt(childCount - 1)
+                val lastViewAdapterPos = getPosition(lastView)
+                if (lastViewAdapterPos < itemCount - 1) {
+                    dx
+                } else {
+                    val viewEnd = getDecoratedRight(lastView)
+                    val parentEnd = width
+                    Math.min(viewEnd - parentEnd, dx)
+                }
+            }
+            else -> 0
+        }
+
+        return delta
+    }
+
+    private fun measureChildWithDecorationsAndMargin(child: View, widthSpec: Int, heightSpec: Int) {
+        val decorRect = Rect()
+        calculateItemDecorationsForChild(child, decorRect)
+        val layoutParams: RecyclerView.LayoutParams = child.layoutParams as RecyclerView.LayoutParams
+
+        val ws = updateSpecWithExtra(widthSpec, layoutParams.leftMargin + decorRect.left, layoutParams.rightMargin + decorRect.right)
+        val hs = updateSpecWithExtra(heightSpec, layoutParams.topMargin + decorRect.top, layoutParams.bottomMargin + decorRect.bottom)
+
+        child.measure(ws, hs)
+    }
+
+    private fun updateSpecWithExtra(spec: Int, startInset: Int, endInset: Int): Int {
+        if (startInset == 0 && endInset == 0) {
+            return spec
+        }
+
+        val mode = View.MeasureSpec.getMode(spec)
+        if (mode == View.MeasureSpec.AT_MOST || mode == View.MeasureSpec.EXACTLY) {
+            return View.MeasureSpec.makeMeasureSpec(
+                    View.MeasureSpec.getSize(spec) - startInset - endInset,
+                    mode
+            )
+        }
+
+        return spec
+    }
+
+    private fun fillDown(recycler: RecyclerView.Recycler) {
+        var pos = 0
+        var fillDown = true
+        var viewStart = 0
+
+        val itemCount = itemCount
+        val width = width
+        val viewWidth = (width * .9).toInt()
+        val widthSpec = View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY)
+        val heightSpec = View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY)
+
+        while (fillDown && pos < itemCount) {
+            val view = recycler.getViewForPosition(pos)
+            addView(view)
+            measureChildWithDecorationsAndMargin(view, widthSpec, heightSpec)
+
+            layoutDecorated(
+                    view,
+                    viewStart,
+                    0,
+                    viewStart + viewWidth,
+                    getDecoratedMeasuredHeight(view)
+            )
+
+            viewStart = getDecoratedRight(view)
+            fillDown = viewStart <= width
+            pos++
+        }
+
+    }
+
+}
 
 class SnapSnapHelper(gravity: Int) : GravitySnapHelper(gravity) {
 
