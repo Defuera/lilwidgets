@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
-import android.graphics.PointF
 import android.graphics.Rect
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -15,13 +14,13 @@ import android.support.v7.widget.RecyclerView
 import android.util.AttributeSet
 import android.util.DisplayMetrics
 import android.util.Log
+import android.util.SparseArray
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import com.github.rubensousa.gravitysnaphelper.GravityPagerSnapHelper
 import com.github.rubensousa.gravitysnaphelper.GravitySnapHelper
 import java.util.*
 
@@ -41,7 +40,7 @@ class SnapActivity : Activity() {
         SnapSnapHelper(Gravity.START).attachToRecyclerView(list)
 
         val anotherList = findViewById(R.id.mp_list) as RecyclerView
-        anotherList.layoutManager = TestLayoutManager(this)
+        anotherList.layoutManager = MagicLinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false, anotherList)
         anotherList.adapter = MPSnapAdapter()
         SnapSnapHelper(Gravity.START).attachToRecyclerView(anotherList)
 
@@ -110,9 +109,94 @@ class SlowRecyclerView @JvmOverloads constructor(
 
 class TestLayoutManager constructor(context: Context) : LinearLayoutManager(context) {
 
+    private val factor = .9
+    private val viewCache = SparseArray<View>()
+
     override fun onLayoutChildren(recycler: RecyclerView.Recycler, state: RecyclerView.State) {
         detachAndScrapAttachedViews(recycler)
-        fillDown(recycler)
+        fill(recycler)
+    }
+
+    private fun fill(recycler: RecyclerView.Recycler) {
+        val anchor = getAnchorView()
+        viewCache.clear()
+
+        (0 until childCount)
+                .map { getChildAt(it) }
+                .forEach { viewCache.put(getPosition(it), it) }
+
+        (0 until viewCache.size())
+                .map { viewCache.valueAt(it) }
+                .forEach { detachView(it) }
+
+        fillToStart(recycler, anchor)
+        fillToEnd(recycler, anchor)
+
+        (0 until viewCache.size())
+                .map { viewCache.valueAt(it) }
+                .forEach { recycler.recycleView(it) }
+    }
+
+    private fun fillToStart(recycler: RecyclerView.Recycler, anchor: View?) {
+        val anchorPos = anchor?.let { getPosition(it) } ?: 0
+        val anchorStart = anchor?.let { getDecoratedLeft(it) } ?: 0
+
+        var fillUp = true
+        var pos = anchorPos - 1
+        var viewEnd = anchorStart
+        val viewWidth = (width * factor).toInt()
+        val ws = View.MeasureSpec.makeMeasureSpec(viewWidth, View.MeasureSpec.EXACTLY)
+        val hs = View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY)
+
+        while (fillUp && pos >= 0) {
+            var view = viewCache.get(pos)
+            if (view != null) {
+                attachView(view)
+                viewCache.remove(pos)
+            } else {
+                view = recycler.getViewForPosition(pos)
+                addView(view, 0)
+                measureChildWithDecorationsAndMargin(view, ws, hs)
+                layoutDecorated(view, viewEnd - viewWidth, 0, viewEnd, getDecoratedMeasuredHeight(view))
+            }
+
+            viewEnd = getDecoratedLeft(view)
+            fillUp = viewEnd > 0
+            pos--
+        }
+    }
+
+    private fun fillToEnd(recycler: RecyclerView.Recycler, anchor: View?) {
+        val anchorPos = anchor?.let { getPosition(it) } ?: 0
+        val anchorStart = anchor?.let { getDecoratedLeft(it) } ?: 0
+
+        var fillDown = true
+        var pos = anchorPos
+        var viewStart = anchorStart
+
+        val itemCount = itemCount
+        val width = width
+        val viewWidth = (width * factor).toInt()
+        val widthSpec = View.MeasureSpec.makeMeasureSpec(viewWidth, View.MeasureSpec.EXACTLY)
+        val heightSpec = View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY)
+
+        while (fillDown && pos < itemCount) {
+            var view = viewCache.get(pos)
+            if (view != null) {
+                attachView(view)
+                viewCache.remove(pos)
+            } else {
+                view = recycler.getViewForPosition(pos)
+                addView(view)
+                measureChildWithDecorationsAndMargin(view, widthSpec, heightSpec)
+                layoutDecorated(view, viewStart, 0, viewStart + viewWidth, getDecoratedMeasuredHeight(view))
+            }
+
+            viewStart = getDecoratedRight(view)
+            fillDown = viewStart <= width
+            pos++
+        }
+
     }
 
     override fun canScrollHorizontally(): Boolean = true
@@ -122,7 +206,35 @@ class TestLayoutManager constructor(context: Context) : LinearLayoutManager(cont
     override fun scrollHorizontallyBy(dx: Int, recycler: RecyclerView.Recycler, state: RecyclerView.State): Int {
         val delta = scrollHorizontallyInternal(dx)
         offsetChildrenHorizontal(-delta)
+        fill(recycler)
         return delta
+    }
+
+    private fun measureChildWithDecorationsAndMargin(child: View, widthSpec: Int, heightSpec: Int) {
+        val decorRect = Rect()
+        calculateItemDecorationsForChild(child, decorRect)
+        val layoutParams: RecyclerView.LayoutParams = child.layoutParams as RecyclerView.LayoutParams
+
+        val ws = updateSpecWithExtra(widthSpec, layoutParams.leftMargin + decorRect.left, layoutParams.rightMargin + decorRect.right)
+        val hs = updateSpecWithExtra(heightSpec, layoutParams.topMargin + decorRect.top, layoutParams.bottomMargin + decorRect.bottom)
+
+        child.measure(ws, hs)
+    }
+
+    private fun updateSpecWithExtra(spec: Int, startInset: Int, endInset: Int): Int {
+        if (startInset == 0 && endInset == 0) {
+            return spec
+        }
+
+        val mode = View.MeasureSpec.getMode(spec)
+        if (mode == View.MeasureSpec.AT_MOST || mode == View.MeasureSpec.EXACTLY) {
+            return View.MeasureSpec.makeMeasureSpec(
+                    View.MeasureSpec.getSize(spec) - startInset - endInset,
+                    mode
+            )
+        }
+
+        return spec
     }
 
     private fun scrollHorizontallyInternal(dx: Int): Int {
@@ -169,10 +281,56 @@ class TestLayoutManager constructor(context: Context) : LinearLayoutManager(cont
         return delta
     }
 
-    private fun measureChildWithDecorationsAndMargin(child: View, widthSpec: Int, heightSpec: Int) {
+    private fun getAnchorView(): View? {
+        val childCount = childCount
+        val viewsOnScreen = mutableMapOf<Int, View>()
+        val mainRect = Rect(0, 0, width, height)
+
+        0.until(childCount)
+                .map { getChildAt(it) }
+                .forEach {
+                    val top = getDecoratedTop(it)
+                    val bottom = getDecoratedBottom(it)
+                    val left = getDecoratedLeft(it)
+                    val right = getDecoratedRight(it)
+                    val viewRect = Rect(left, top, right, bottom)
+                    if (viewRect.intersect(mainRect)) {
+                        val square = viewRect.width() * viewRect.height()
+                        viewsOnScreen.put(square, it)
+                    }
+                }
+
+        if (viewsOnScreen.isEmpty()) {
+            return null
+        }
+
+        var maxSquare = -1
+        viewsOnScreen
+                .keys
+                .forEach { maxSquare = Math.max(maxSquare, it) }
+
+        return viewsOnScreen[maxSquare]
+    }
+
+}
+
+class MagicLinearLayoutManager @JvmOverloads constructor(
+        context: Context,
+        orientation: Int = LinearLayoutManager.VERTICAL,
+        reverse: Boolean = false,
+        val recyclerView: RecyclerView
+) : LinearLayoutManager(context, orientation, reverse) {
+
+    override fun measureChildWithMargins(child: View?, widthUsed: Int, heightUsed: Int) {
+        if (child == null) return
+
         val decorRect = Rect()
         calculateItemDecorationsForChild(child, decorRect)
         val layoutParams: RecyclerView.LayoutParams = child.layoutParams as RecyclerView.LayoutParams
+
+        val viewWidth = (width * 0.9).toInt()
+        val widthSpec = View.MeasureSpec.makeMeasureSpec(viewWidth, View.MeasureSpec.EXACTLY)
+        val heightSpec = View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY)
 
         val ws = updateSpecWithExtra(widthSpec, layoutParams.leftMargin + decorRect.left, layoutParams.rightMargin + decorRect.right)
         val hs = updateSpecWithExtra(heightSpec, layoutParams.topMargin + decorRect.top, layoutParams.bottomMargin + decorRect.bottom)
@@ -194,37 +352,6 @@ class TestLayoutManager constructor(context: Context) : LinearLayoutManager(cont
         }
 
         return spec
-    }
-
-    private fun fillDown(recycler: RecyclerView.Recycler) {
-        var pos = 0
-        var fillDown = true
-        var viewStart = 0
-
-        val itemCount = itemCount
-        val width = width
-        val viewWidth = (width * .9).toInt()
-        val widthSpec = View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY)
-        val heightSpec = View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY)
-
-        while (fillDown && pos < itemCount) {
-            val view = recycler.getViewForPosition(pos)
-            addView(view)
-            measureChildWithDecorationsAndMargin(view, widthSpec, heightSpec)
-
-            layoutDecorated(
-                    view,
-                    viewStart,
-                    0,
-                    viewStart + viewWidth,
-                    getDecoratedMeasuredHeight(view)
-            )
-
-            viewStart = getDecoratedRight(view)
-            fillDown = viewStart <= width
-            pos++
-        }
-
     }
 
 }
