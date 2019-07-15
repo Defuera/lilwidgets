@@ -21,13 +21,13 @@ import ru.justd.lilwidgets.LilLoaderDialog
 @Config(constants = BuildConfig::class, sdk = intArrayOf(Build.VERSION_CODES.M))
 class LilLoaderDialogTest {
 
-    val activity: MainActivity = Robolectric.buildActivity(MainActivity::class.java)
+    private val activity: MainActivity = Robolectric.buildActivity(MainActivity::class.java)
             .create()
             .start()
             .resume()
             .get()
 
-    val fragmentManager: FragmentManager = activity.supportFragmentManager
+    private val fragmentManager: FragmentManager = activity.supportFragmentManager
 
     @Before
     @Throws(Exception::class)

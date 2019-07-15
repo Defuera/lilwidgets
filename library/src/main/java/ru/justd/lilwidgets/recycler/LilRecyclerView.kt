@@ -10,6 +10,7 @@ import android.support.v7.widget.helper.ItemTouchHelper.*
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.MotionEvent.*
+import android.view.View
 import ru.justd.lilwidgets.recycler.LilRecyclerView.DragMode.*
 
 /**
@@ -134,11 +135,11 @@ open class LilRecyclerView @JvmOverloads constructor(
         this.handleViewId = null
     }
 
-    override fun setLayoutManager(lm: LayoutManager) {
+    override fun setLayoutManager(lm: LayoutManager?) {
         super.setLayoutManager(lm)
 
         if (allowVerticalDrag == null) {
-            allowVerticalDrag = lm.canScrollVertically()
+            allowVerticalDrag = lm?.canScrollVertically()
         }
 
         if (allowHorizontalDrag == null) {
@@ -148,7 +149,7 @@ open class LilRecyclerView @JvmOverloads constructor(
                 else -> false
             }
 
-            allowHorizontalDrag = lm.canScrollHorizontally() or isMultiColumn
+            allowHorizontalDrag = (lm?.canScrollHorizontally() ?: false) or isMultiColumn
         }
 
     }
@@ -215,7 +216,7 @@ open class LilRecyclerView @JvmOverloads constructor(
 
                 val view = findChildViewUnder(e.x, e.y) ?: return false
 
-                val handle = view.findViewById(handleViewId!!)
+                val handle = view.findViewById<View>(handleViewId!!)
                 val handleRect = Rect()
                 handle?.getHitRect(handleRect)
 
@@ -224,7 +225,7 @@ open class LilRecyclerView @JvmOverloads constructor(
 
                 if (handleRect.contains(xInParent.toInt(), yInParent.toInt())) {
                     val viewHolder = getChildViewHolder(view)
-                    if (dragPredicate?.invoke(viewHolder) ?: true) {
+                    if (dragPredicate?.invoke(viewHolder) != false) {
                         itemTouchHelper.startDrag(viewHolder)
                         return true
                     }

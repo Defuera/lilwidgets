@@ -19,7 +19,7 @@ internal class LilItemTouchHelperCallback(
     internal var dragPredicate: ((ViewHolder) -> Boolean)? = null
     internal var replacePredicate: ((current: ViewHolder?, target: ViewHolder?) -> Boolean)? = null
     internal var dragFlags: Int = 0
-    internal var activeItemElevation : Float? = null
+    internal var activeItemElevation: Float? = null
     internal var selectedItem: ViewHolder? = null
     internal var borderIsReached = false
 
@@ -27,13 +27,13 @@ internal class LilItemTouchHelperCallback(
 
     override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: ViewHolder): Int {
         return makeMovementFlags(
-                if (dragPredicate?.invoke(viewHolder) ?: true) dragFlags else 0,
-                0
+            if (dragPredicate?.invoke(viewHolder) != false) dragFlags else 0,
+            0
         )
     }
 
-    override fun canDropOver(recyclerView: RecyclerView?, current: ViewHolder?, target: ViewHolder?): Boolean =
-            replacePredicate?.invoke(current, target) ?: super.canDropOver(recyclerView, current, target)
+    override fun canDropOver(recyclerView: RecyclerView, current: ViewHolder, target: ViewHolder): Boolean =
+        replacePredicate?.invoke(current, target) ?: super.canDropOver(recyclerView, current, target)
 
     override fun onMove(recyclerView: RecyclerView, viewHolder: ViewHolder, target: ViewHolder): Boolean {
 
@@ -64,12 +64,10 @@ internal class LilItemTouchHelperCallback(
         super.clearView(recyclerView, viewHolder)
     }
 
-
-
-    override fun onChildDraw(c: Canvas?, recyclerView: RecyclerView, viewHolder: ViewHolder?, dX: Float, dY: Float, actionState: Int, isCurrentlyActive: Boolean) {
+    override fun onChildDraw(c: Canvas, recyclerView: RecyclerView, viewHolder: ViewHolder, dX: Float, dY: Float, actionState: Int, isCurrentlyActive: Boolean) {
 
         if (isCurrentlyActive) {
-            val view = viewHolder?.itemView ?: return
+            val view = viewHolder.itemView
 
             // set active item's elevation
             var originalElevation: Any? = view.getTag(R.id.item_touch_helper_previous_elevation)
@@ -89,7 +87,7 @@ internal class LilItemTouchHelperCallback(
         super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
     }
 
-    override fun onSwiped(viewHolder: ViewHolder?, direction: Int) {}
+    override fun onSwiped(viewHolder: ViewHolder, direction: Int) {}
 
     override fun isLongPressDragEnabled(): Boolean = longPressEnabled
 
